@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "commissionhud",
+  "version": "1.0.0",
+  "name": "CommissionHud",
+  "description": "Displays Hypixel SkyBlock mining commissions on your HUD",
+  "authors": ["YourName"],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/commissionhud/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.commissionhud.CommissionHudMod"]
+  },
+  "mixins": ["commissionhud.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "minecraft": "1.21.5",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

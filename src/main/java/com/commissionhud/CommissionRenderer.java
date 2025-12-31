@@ -1,0 +1,64 @@
+package com.commissionhud;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.Text;
+import java.util.List;
+
+public class CommissionRenderer {
+    public static void render(DrawContext context, List<CommissionManager.Commission> commissions) {
+        if (commissions.isEmpty()) {
+            return;
+        }
+        
+        ConfigManager.Config cfg = CommissionHudMod.config.getConfig();
+        MinecraftClient client = MinecraftClient.getInstance();
+        
+        context.getMatrices().push();
+        context.getMatrices().translate(cfg.x, cfg.y, 0);
+        context.getMatrices().scale(cfg.scale, cfg.scale, 1.0f);
+        
+        int y = 0;
+        
+        // Title
+        context.drawText(client.textRenderer, Text.literal("Commissions:"), 0, y, cfg.color, true);
+        y += 12;
+        
+        // Draw each commission
+        for (CommissionManager.Commission commission : commissions) {
+            String text = "• " + commission.name;
+            if (cfg.showPercentage) {
+                text += ": " + commission.percentage + "%";
+            }
+            
+            // Color based on completion
+            int color = cfg.color;
+            if (commission.percentage >= 100) {
+                color = 0x55FF55; // Green for complete
+            } else if (commission.percentage >= 75) {
+                color = 0xFFFF55; // Yellow for almost done
+            }
+            
+            context.drawText(client.textRenderer, Text.literal(text), 0, y, color, true);
+            
+            // Draw progress bar
+            if (cfg.showPercentage) {
+                int barWidth = 100;
+                int barHeight = 2;
+                int barY = y + 9;
+                
+                // Background
+                context.fill(0, barY, barWidth, barY + barHeight, 0x88000000);
+                
+                // Progress
+                int progressWidth = (int) (barWidth * (commission.percentage / 100.0f));
+                int progressColor = commission.percentage >= 100 ? 0xFF55FF55 : (0xFF000000 | cfg.progressBarColor);
+                context.fill(0, barY, progressWidth, barY + barHeight, progressColor);
+            }
+            
+            y += cfg.showPercentage ? 14 : 10;
+        }
+        
+        context.getMatrices().pop();
+    }
+}
