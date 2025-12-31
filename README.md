@@ -1,6 +1,6 @@
 # CommissionHUD
 
-A simple Fabric mod for Minecraft 1.21.5 that displays your Hypixel SkyBlock mining commissions on screen
+A simple, lightweight Fabric mod for Minecraft 1.21.5 that displays your Hypixel SkyBlock mining commissions on screen
 - https://discord.gg/u8b6cj2DED <- Discord server!
 
 ## Features
