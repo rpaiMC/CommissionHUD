@@ -7,8 +7,7 @@ A simple Fabric mod for Minecraft 1.21.5 that displays your Hypixel SkyBlock min
 - Shows active commissions from Dwarven Mines, Crystal Hollows, and Glacite Tunnels
 - Progress bars with customizable colors
 - Adjustable position (drag to move), scale, and text color
-- Two display modes: show everywhere or only in mining areas
-- Commissions persist when leaving mining areas temporarily
+- Two display modes: show everywhere or only in mining areas (Commissions persist when leaving mining areas if enabled)
 
 ## Installation
 
