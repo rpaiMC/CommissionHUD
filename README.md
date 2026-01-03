@@ -51,6 +51,10 @@ The compiled jar will be in `build/libs/`.
 - Fabric Loader 0.16.9+
 - Fabric API
 
+## Note
+- Builds in releases and on modrinth are STABLE RELEASES!
+- Beta builds are available if you build the src from scratch, or have access to the pre-built .jar files within the discord.
+
 ## License
 
 MIT
