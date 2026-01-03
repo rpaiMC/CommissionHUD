@@ -17,6 +17,46 @@ public class CommissionManager {
     // Track if we're in the commissions section of tab list
     private boolean inCommissionsSection = false;
     
+    // Commission totals for fraction display
+    // Dwarven Mines
+    private static final Map<String, Integer> COMMISSION_TOTALS = new HashMap<>();
+    static {
+        // Dwarven Mines commissions
+        COMMISSION_TOTALS.put("glacite walker slayer", 50);
+        COMMISSION_TOTALS.put("goblin slayer", 100);
+        COMMISSION_TOTALS.put("mithril miner", 350);
+        COMMISSION_TOTALS.put("titanium miner", 15);
+        COMMISSION_TOTALS.put("treasure hoarder puncher", 10);
+        COMMISSION_TOTALS.put("goblin raid slayer", 20);
+        COMMISSION_TOTALS.put("golden goblin slayer", 1);
+        COMMISSION_TOTALS.put("lucky raffle", 20);
+        COMMISSION_TOTALS.put("star sentry puncher", 10);
+        COMMISSION_TOTALS.put("2x mithril powder collector", 500);
+        
+        // Area-specific Mithril/Titanium (Dwarven Mines)
+        // These show as "[Area] Mithril" or "[Area] Titanium" in tab
+        COMMISSION_TOTALS.put("mithril", 250); // For area-specific mithril
+        COMMISSION_TOTALS.put("titanium", 10); // For area-specific titanium
+        
+        // Crystal Hollows commissions
+        COMMISSION_TOTALS.put("automaton slayer", 13);
+        COMMISSION_TOTALS.put("sludge slayer", 25);
+        COMMISSION_TOTALS.put("team treasurite member slayer", 13);
+        COMMISSION_TOTALS.put("yog slayer", 13);
+        COMMISSION_TOTALS.put("chest looter", 3);
+        COMMISSION_TOTALS.put("thyst slayer", 5);
+        COMMISSION_TOTALS.put("hard stone miner", 1000);
+        COMMISSION_TOTALS.put("boss corleone slayer", 1);
+        
+        // Gemstone collectors (Crystal Hollows) - all 1000
+        COMMISSION_TOTALS.put("ruby collector", 1000);
+        COMMISSION_TOTALS.put("amber collector", 1000);
+        COMMISSION_TOTALS.put("sapphire collector", 1000);
+        COMMISSION_TOTALS.put("jade collector", 1000);
+        COMMISSION_TOTALS.put("amethyst collector", 1000);
+        COMMISSION_TOTALS.put("topaz collector", 1000);
+    }
+    
     // Section headers to detect when we leave the commissions section
     private static final Set<String> SECTION_HEADERS = new HashSet<>(Arrays.asList(
         "players", "info", "profile", "skills", "stats", 
@@ -178,10 +218,41 @@ public class CommissionManager {
     public static class Commission {
         public final String name;
         public final int percentage;
+        public final int total;
+        public final int current;
         
         public Commission(String name, int percentage) {
             this.name = name;
             this.percentage = percentage;
+            this.total = findTotal(name);
+            this.current = (int) Math.round(this.total * (percentage / 100.0));
+        }
+        
+        private static int findTotal(String commissionName) {
+            String lowerName = commissionName.toLowerCase();
+            
+            // Direct match first
+            if (COMMISSION_TOTALS.containsKey(lowerName)) {
+                return COMMISSION_TOTALS.get(lowerName);
+            }
+            
+            // Check if any key is contained in the name (for area-prefixed commissions)
+            // e.g., "Lava Springs Titanium" should match "titanium"
+            for (Map.Entry<String, Integer> entry : COMMISSION_TOTALS.entrySet()) {
+                if (lowerName.contains(entry.getKey())) {
+                    return entry.getValue();
+                }
+            }
+            
+            // Check if name ends with a known commission type
+            for (Map.Entry<String, Integer> entry : COMMISSION_TOTALS.entrySet()) {
+                if (lowerName.endsWith(entry.getKey())) {
+                    return entry.getValue();
+                }
+            }
+            
+            // Default to 100 if unknown
+            return 100;
         }
         
         @Override

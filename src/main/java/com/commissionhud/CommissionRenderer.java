@@ -28,7 +28,11 @@ public class CommissionRenderer {
         for (CommissionManager.Commission commission : commissions) {
             String text = "• " + commission.name;
             if (cfg.showPercentage) {
-                text += ": " + commission.percentage + "%";
+                if (cfg.progressFormat == ConfigManager.ProgressFormat.PERCENTAGE) {
+                    text += ": " + commission.percentage + "%";
+                } else {
+                    text += ": " + commission.current + "/" + commission.total;
+                }
             }
             
             // Color based on completion
@@ -50,7 +54,7 @@ public class CommissionRenderer {
                 // Background
                 context.fill(0, barY, barWidth, barY + barHeight, 0x88000000);
                 
-                // Progress
+                // Progress - use custom color, green override for completed
                 int progressWidth = (int) (barWidth * (commission.percentage / 100.0f));
                 int progressColor = commission.percentage >= 100 ? 0xFF55FF55 : (0xFF000000 | cfg.progressBarColor);
                 context.fill(0, barY, progressWidth, barY + barHeight, progressColor);

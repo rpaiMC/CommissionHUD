@@ -37,9 +37,12 @@ public class ConfigManager {
             if (Files.exists(CONFIG_PATH)) {
                 String json = Files.readString(CONFIG_PATH);
                 config = GSON.fromJson(json, Config.class);
-                // Handle null displayMode from old configs
+                // Handle null values from old configs
                 if (config.displayMode == null) {
                     config.displayMode = DisplayMode.EVERYWHERE;
+                }
+                if (config.progressFormat == null) {
+                    config.progressFormat = ProgressFormat.PERCENTAGE;
                 }
             } else {
                 save();
@@ -80,6 +83,14 @@ public class ConfigManager {
         save();
     }
     
+    public ProgressFormat getProgressFormat() { return config.progressFormat; }
+    public void setProgressFormat(ProgressFormat format) { config.progressFormat = format; save(); }
+    
+    public void cycleProgressFormat() {
+        config.progressFormat = config.progressFormat.next();
+        save();
+    }
+    
     public static class Config {
         public boolean enabled = true;
         public float scale = 1.0f;
@@ -89,5 +100,26 @@ public class ConfigManager {
         public int progressBarColor = 0xFFAA00; // Gold/Orange
         public boolean showPercentage = true;
         public DisplayMode displayMode = DisplayMode.EVERYWHERE;
+        public ProgressFormat progressFormat = ProgressFormat.PERCENTAGE;
+    }
+    
+    public enum ProgressFormat {
+        PERCENTAGE("Percentage (20%)"),
+        FRACTION("Fraction (20/100)");
+        
+        private final String displayName;
+        
+        ProgressFormat(String displayName) {
+            this.displayName = displayName;
+        }
+        
+        public String getDisplayName() {
+            return displayName;
+        }
+        
+        public ProgressFormat next() {
+            ProgressFormat[] values = values();
+            return values[(this.ordinal() + 1) % values.length];
+        }
     }
 }

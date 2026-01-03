@@ -45,13 +45,23 @@ public class ConfigScreen extends Screen {
         
         // Toggle percentage display
         addDrawableChild(ButtonWidget.builder(
-            Text.literal("Show Percentage: " + cfg.showPercentage),
+            Text.literal("Show Progress: " + cfg.showPercentage),
             button -> {
                 cfg.showPercentage = !cfg.showPercentage;
                 CommissionHudMod.config.save();
-                button.setMessage(Text.literal("Show Percentage: " + cfg.showPercentage));
+                button.setMessage(Text.literal("Show Progress: " + cfg.showPercentage));
             })
             .dimensions(centerX - buttonWidth / 2, startY + spacing, buttonWidth, buttonHeight)
+            .build());
+        
+        // Progress format toggle (percentage vs fraction)
+        addDrawableChild(ButtonWidget.builder(
+            Text.literal("Format: " + cfg.progressFormat.getDisplayName()),
+            button -> {
+                CommissionHudMod.config.cycleProgressFormat();
+                button.setMessage(Text.literal("Format: " + CommissionHudMod.config.getProgressFormat().getDisplayName()));
+            })
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 2, buttonWidth, buttonHeight)
             .build());
         
         // Display mode toggle
@@ -61,11 +71,11 @@ public class ConfigScreen extends Screen {
                 CommissionHudMod.config.cycleDisplayMode();
                 button.setMessage(Text.literal("Display: " + CommissionHudMod.config.getDisplayMode().getDisplayName()));
             })
-            .dimensions(centerX - buttonWidth / 2, startY + spacing * 2, buttonWidth, buttonHeight)
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 3, buttonWidth, buttonHeight)
             .build());
         
         // Scale slider
-        addDrawableChild(new SliderWidget(centerX - buttonWidth / 2, startY + spacing * 3, buttonWidth, buttonHeight, 
+        addDrawableChild(new SliderWidget(centerX - buttonWidth / 2, startY + spacing * 4, buttonWidth, buttonHeight, 
             Text.literal("Scale: " + String.format("%.1f", cfg.scale)), (cfg.scale - 0.5) / 1.5) {
             @Override
             protected void updateMessage() {
@@ -87,7 +97,7 @@ public class ConfigScreen extends Screen {
                     client.setScreen(new ColorPickerScreen(this, ColorPickerScreen.ColorType.TEXT_COLOR));
                 }
             })
-            .dimensions(centerX - buttonWidth / 2, startY + spacing * 4, buttonWidth, buttonHeight)
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 5, buttonWidth, buttonHeight)
             .build());
         
         // Progress bar color picker button
@@ -98,7 +108,7 @@ public class ConfigScreen extends Screen {
                     client.setScreen(new ColorPickerScreen(this, ColorPickerScreen.ColorType.PROGRESS_BAR_COLOR));
                 }
             })
-            .dimensions(centerX - buttonWidth / 2, startY + spacing * 5, buttonWidth, buttonHeight)
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 6, buttonWidth, buttonHeight)
             .build());
         
         // Done button
@@ -118,11 +128,11 @@ public class ConfigScreen extends Screen {
         int colorPreviewX = width / 2 + 105;
         
         // Text color preview
-        int textColorY = 35 + 24 * 4;
+        int textColorY = 35 + 24 * 5;
         drawColorPreview(context, colorPreviewX, textColorY, cfg.color);
         
         // Progress bar color preview
-        int barColorY = 35 + 24 * 5;
+        int barColorY = 35 + 24 * 6;
         drawColorPreview(context, colorPreviewX, barColorY, cfg.progressBarColor);
         
         // Instructions
@@ -154,7 +164,11 @@ public class ConfigScreen extends Screen {
         
         String exampleText = "• Mithril Miner";
         if (cfg.showPercentage) {
-            exampleText += ": 45%";
+            if (cfg.progressFormat == ConfigManager.ProgressFormat.PERCENTAGE) {
+                exampleText += ": 45%";
+            } else {
+                exampleText += ": 158/350"; // 45% of 350
+            }
         }
         context.drawText(textRenderer, Text.literal(exampleText), 0, 12, cfg.color, true);
         
