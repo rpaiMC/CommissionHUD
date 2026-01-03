@@ -6,6 +6,7 @@ A simple, lightweight Fabric mod for Minecraft 1.21.5 that displays your Hypixel
 ## Features
 
 - Shows active commissions from Dwarven Mines, Crystal Hollows, and Glacite Tunnels
+- Powder display for mithril, gemstone, and glacite (only shows if non zero)
 - Progress bars with customizable colors
 - Adjustable position (drag to move), scale, and text color
 - Two display modes: show everywhere or only in mining areas (Commissions persist when leaving mining areas if enabled)
@@ -24,6 +25,8 @@ The mod reads commission data from the tab list. You need to enable the Commissi
 1. Join Hypixel SkyBlock
 2. Type `/widgets` or go to SkyBlock Menu → Settings → Personal → User Interface → Player List Info
 3. Enable the "Commissions" widget
+4. Enable the "Powder" widget if it isn't already enabled
+Note: both of these may be enabled by default, but ensure that they are
 
 ## Usage
 
