@@ -42,7 +42,10 @@ public class ColorPickerScreen extends Screen {
     
     public enum ColorType {
         TEXT_COLOR("Text Color"),
-        PROGRESS_BAR_COLOR("Progress Bar Color");
+        PROGRESS_BAR_COLOR("Progress Bar Color"),
+        POWDER_TITLE_COLOR("Powder Title Color"),
+        POWDER_LABEL_COLOR("Powder Label Color"),
+        POWDER_VALUE_COLOR("Powder Value Color");
         
         private final String displayName;
         
@@ -61,10 +64,24 @@ public class ColorPickerScreen extends Screen {
         this.colorType = colorType;
         
         // Get current color based on type
-        if (colorType == ColorType.TEXT_COLOR) {
-            this.currentColor = CommissionHudMod.config.getColor();
-        } else {
-            this.currentColor = CommissionHudMod.config.getProgressBarColor();
+        switch (colorType) {
+            case TEXT_COLOR:
+                this.currentColor = CommissionHudMod.config.getColor();
+                break;
+            case PROGRESS_BAR_COLOR:
+                this.currentColor = CommissionHudMod.config.getProgressBarColor();
+                break;
+            case POWDER_TITLE_COLOR:
+                this.currentColor = CommissionHudMod.config.getPowderTitleColor();
+                break;
+            case POWDER_LABEL_COLOR:
+                this.currentColor = CommissionHudMod.config.getPowderLabelColor();
+                break;
+            case POWDER_VALUE_COLOR:
+                this.currentColor = CommissionHudMod.config.getPowderValueColor();
+                break;
+            default:
+                this.currentColor = 0xFFFFFF;
         }
         this.selectedColor = currentColor;
         
@@ -113,10 +130,22 @@ public class ColorPickerScreen extends Screen {
         // Confirm and Cancel buttons - centered below hex input
         int buttonY = previewY + previewSize + 45;
         addDrawableChild(ButtonWidget.builder(Text.literal("Confirm"), b -> {
-            if (colorType == ColorType.TEXT_COLOR) {
-                CommissionHudMod.config.setColor(selectedColor);
-            } else {
-                CommissionHudMod.config.setProgressBarColor(selectedColor);
+            switch (colorType) {
+                case TEXT_COLOR:
+                    CommissionHudMod.config.setColor(selectedColor);
+                    break;
+                case PROGRESS_BAR_COLOR:
+                    CommissionHudMod.config.setProgressBarColor(selectedColor);
+                    break;
+                case POWDER_TITLE_COLOR:
+                    CommissionHudMod.config.setPowderTitleColor(selectedColor);
+                    break;
+                case POWDER_LABEL_COLOR:
+                    CommissionHudMod.config.setPowderLabelColor(selectedColor);
+                    break;
+                case POWDER_VALUE_COLOR:
+                    CommissionHudMod.config.setPowderValueColor(selectedColor);
+                    break;
             }
             close();
         }).dimensions(width / 2 - 102, buttonY, 100, 20).build());

@@ -111,6 +111,26 @@ public class ConfigScreen extends Screen {
             .dimensions(centerX - buttonWidth / 2, startY + spacing * 6, buttonWidth, buttonHeight)
             .build());
         
+        // Powder display config button
+        addDrawableChild(ButtonWidget.builder(
+            Text.literal("Powder Display Settings..."),
+            button -> {
+                if (client != null) {
+                    client.setScreen(new PowderConfigScreen(this));
+                }
+            })
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 7, buttonWidth, buttonHeight)
+            .build());
+        
+        // Reset Position button
+        addDrawableChild(ButtonWidget.builder(
+            Text.literal("Reset Position"),
+            button -> {
+                CommissionHudMod.config.setPosition(10, 10);
+            })
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 8, buttonWidth, buttonHeight)
+            .build());
+        
         // Done button
         addDrawableChild(ButtonWidget.builder(Text.literal("Done"), button -> close())
             .dimensions(centerX - buttonWidth / 2, height - 28, buttonWidth, buttonHeight)
@@ -155,28 +175,48 @@ public class ConfigScreen extends Screen {
         
         super.render(context, mouseX, mouseY, delta);
         
-        // Render HUD preview
+        // Render HUD preview with 3 example commissions
         context.getMatrices().push();
         context.getMatrices().translate(cfg.x, cfg.y, 0);
         context.getMatrices().scale(cfg.scale, cfg.scale, 1.0f);
         
-        context.drawText(textRenderer, Text.literal("Commissions:"), 0, 0, cfg.color, true);
+        int y = 0;
+        context.drawText(textRenderer, Text.literal("Commissions:"), 0, y, cfg.color, true);
+        y += 12;
         
-        String exampleText = "• Mithril Miner";
+        // Example commission 1
+        String example1 = "• Mithril Miner";
         if (cfg.showPercentage) {
-            if (cfg.progressFormat == ConfigManager.ProgressFormat.PERCENTAGE) {
-                exampleText += ": 45%";
-            } else {
-                exampleText += ": 158/350"; // 45% of 350
-            }
+            example1 += cfg.progressFormat == ConfigManager.ProgressFormat.PERCENTAGE ? ": 45%" : ": 158/350";
         }
-        context.drawText(textRenderer, Text.literal(exampleText), 0, 12, cfg.color, true);
-        
+        context.drawText(textRenderer, Text.literal(example1), 0, y, cfg.color, true);
         if (cfg.showPercentage) {
-            // Progress bar background
-            context.fill(0, 21, 100, 23, 0x88000000);
-            // Progress bar with custom color
-            context.fill(0, 21, 45, 23, 0xFF000000 | cfg.progressBarColor);
+            context.fill(0, y + 9, 100, y + 11, 0x88000000);
+            context.fill(0, y + 9, 45, y + 11, 0xFF000000 | cfg.progressBarColor);
+        }
+        y += cfg.showPercentage ? 14 : 10;
+        
+        // Example commission 2
+        String example2 = "• Goblin Slayer";
+        if (cfg.showPercentage) {
+            example2 += cfg.progressFormat == ConfigManager.ProgressFormat.PERCENTAGE ? ": 80%" : ": 80/100";
+        }
+        context.drawText(textRenderer, Text.literal(example2), 0, y, 0xFFFF55, true); // Yellow - almost done
+        if (cfg.showPercentage) {
+            context.fill(0, y + 9, 100, y + 11, 0x88000000);
+            context.fill(0, y + 9, 80, y + 11, 0xFF000000 | cfg.progressBarColor);
+        }
+        y += cfg.showPercentage ? 14 : 10;
+        
+        // Example commission 3
+        String example3 = "• Titanium Miner";
+        if (cfg.showPercentage) {
+            example3 += cfg.progressFormat == ConfigManager.ProgressFormat.PERCENTAGE ? ": 100%" : ": 15/15";
+        }
+        context.drawText(textRenderer, Text.literal(example3), 0, y, 0x55FF55, true); // Green - complete
+        if (cfg.showPercentage) {
+            context.fill(0, y + 9, 100, y + 11, 0x88000000);
+            context.fill(0, y + 9, 100, y + 11, 0xFF55FF55); // Green bar for complete
         }
         
         context.getMatrices().pop();

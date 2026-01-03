@@ -12,6 +12,7 @@ public class CommissionHudMod implements ClientModInitializer {
     public static final ConfigManager config = new ConfigManager();
     public static final CommissionManager commissionManager = new CommissionManager();
     public static final LocationDetector locationDetector = new LocationDetector();
+    public static final PowderManager powderManager = new PowderManager();
     
     @Override
     public void onInitializeClient() {
@@ -21,7 +22,6 @@ public class CommissionHudMod implements ClientModInitializer {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             dispatcher.register(literal("chud")
                 .executes(context -> {
-                    // Schedule screen opening for next tick on the main thread
                     MinecraftClient client = MinecraftClient.getInstance();
                     client.send(() -> {
                         client.setScreen(new ConfigScreen());
@@ -33,10 +33,24 @@ public class CommissionHudMod implements ClientModInitializer {
         // Register HUD renderer
         HudRenderCallback.EVENT.register((context, tickDelta) -> {
             MinecraftClient client = MinecraftClient.getInstance();
-            if (config.isEnabled() && client.world != null && client.currentScreen == null) {
-                // Check if we should display based on location settings
-                if (shouldDisplayHud()) {
+            if (client.world != null) {
+                // Don't render HUD if config screen is open (we show preview instead)
+                if (client.currentScreen instanceof ConfigScreen || 
+                    client.currentScreen instanceof PowderConfigScreen) {
+                    return;
+                }
+                
+                // Update powder data
+                powderManager.update();
+                
+                // Render commission HUD
+                if (config.isEnabled() && shouldDisplayHud()) {
                     CommissionRenderer.render(context, commissionManager.getActiveCommissions());
+                }
+                
+                // Render powder HUD
+                if (config.isPowderEnabled() && shouldDisplayHud()) {
+                    PowderRenderer.render(context, powderManager);
                 }
             }
         });

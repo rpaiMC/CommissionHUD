@@ -1,0 +1,197 @@
+package com.commissionhud;
+
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.SliderWidget;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.Text;
+
+public class PowderConfigScreen extends Screen {
+    private final Screen parent;
+    private int dragX, dragY;
+    private boolean dragging = false;
+    
+    public PowderConfigScreen(Screen parent) {
+        super(Text.literal("Powder Display Config"));
+        this.parent = parent;
+    }
+    
+    @Override
+    protected void init() {
+        ConfigManager.Config cfg = CommissionHudMod.config.getConfig();
+        
+        int centerX = width / 2;
+        int buttonWidth = 200;
+        int buttonHeight = 20;
+        int spacing = 24;
+        int startY = 35;
+        
+        // Toggle enabled
+        addDrawableChild(ButtonWidget.builder(
+            Text.literal("Enabled: " + cfg.powderEnabled),
+            button -> {
+                cfg.powderEnabled = !cfg.powderEnabled;
+                CommissionHudMod.config.save();
+                button.setMessage(Text.literal("Enabled: " + cfg.powderEnabled));
+            })
+            .dimensions(centerX - buttonWidth / 2, startY, buttonWidth, buttonHeight)
+            .build());
+        
+        // Scale slider
+        addDrawableChild(new SliderWidget(centerX - buttonWidth / 2, startY + spacing, buttonWidth, buttonHeight, 
+            Text.literal("Scale: " + String.format("%.1f", cfg.powderScale)), (cfg.powderScale - 0.5) / 1.5) {
+            @Override
+            protected void updateMessage() {
+                cfg.powderScale = (float) (0.5 + value * 1.5);
+                setMessage(Text.literal("Scale: " + String.format("%.1f", cfg.powderScale)));
+            }
+            
+            @Override
+            protected void applyValue() {
+                CommissionHudMod.config.save();
+            }
+        });
+        
+        // Title color picker button
+        addDrawableChild(ButtonWidget.builder(
+            Text.literal("Title Color: #" + String.format("%06X", cfg.powderTitleColor)),
+            button -> {
+                if (client != null) {
+                    client.setScreen(new ColorPickerScreen(this, ColorPickerScreen.ColorType.POWDER_TITLE_COLOR));
+                }
+            })
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 2, buttonWidth, buttonHeight)
+            .build());
+        
+        // Label color picker button
+        addDrawableChild(ButtonWidget.builder(
+            Text.literal("Label Color: #" + String.format("%06X", cfg.powderLabelColor)),
+            button -> {
+                if (client != null) {
+                    client.setScreen(new ColorPickerScreen(this, ColorPickerScreen.ColorType.POWDER_LABEL_COLOR));
+                }
+            })
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 3, buttonWidth, buttonHeight)
+            .build());
+        
+        // Value color picker button
+        addDrawableChild(ButtonWidget.builder(
+            Text.literal("Value Color: #" + String.format("%06X", cfg.powderValueColor)),
+            button -> {
+                if (client != null) {
+                    client.setScreen(new ColorPickerScreen(this, ColorPickerScreen.ColorType.POWDER_VALUE_COLOR));
+                }
+            })
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 4, buttonWidth, buttonHeight)
+            .build());
+        
+        // Reset Position button
+        addDrawableChild(ButtonWidget.builder(
+            Text.literal("Reset Position"),
+            button -> {
+                CommissionHudMod.config.setPowderPosition(10, 150);
+            })
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 5, buttonWidth, buttonHeight)
+            .build());
+        
+        // Back button
+        addDrawableChild(ButtonWidget.builder(Text.literal("Back"), button -> close())
+            .dimensions(centerX - buttonWidth / 2, height - 28, buttonWidth, buttonHeight)
+            .build());
+    }
+    
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        renderBackground(context, mouseX, mouseY, delta);
+        context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 12, 0xFFFFFF);
+        
+        ConfigManager.Config cfg = CommissionHudMod.config.getConfig();
+        
+        // Draw color preview squares
+        int colorPreviewX = width / 2 + 105;
+        
+        // Title color preview
+        drawColorPreview(context, colorPreviewX, 35 + 24 * 2, cfg.powderTitleColor);
+        
+        // Label color preview
+        drawColorPreview(context, colorPreviewX, 35 + 24 * 3, cfg.powderLabelColor);
+        
+        // Value color preview
+        drawColorPreview(context, colorPreviewX, 35 + 24 * 4, cfg.powderValueColor);
+        
+        // Instructions
+        context.drawCenteredTextWithShadow(textRenderer, 
+            Text.literal("Drag the preview to reposition"), 
+            width / 2, height - 55, 0x888888);
+        
+        super.render(context, mouseX, mouseY, delta);
+        
+        // Render powder preview
+        context.getMatrices().push();
+        context.getMatrices().translate(cfg.powderX, cfg.powderY, 0);
+        context.getMatrices().scale(cfg.powderScale, cfg.powderScale, 1.0f);
+        
+        context.drawText(textRenderer, Text.literal("Powder:"), 0, 0, cfg.powderTitleColor, true);
+        
+        String mithrilLabel = "Mithril: ";
+        String mithrilValue = "123,456";
+        int mithrilLabelWidth = textRenderer.getWidth(mithrilLabel);
+        context.drawText(textRenderer, Text.literal(mithrilLabel), 0, 12, cfg.powderLabelColor, true);
+        context.drawText(textRenderer, Text.literal(mithrilValue), mithrilLabelWidth, 12, cfg.powderValueColor, true);
+        
+        String gemstoneLabel = "Gemstone: ";
+        String gemstoneValue = "78,901";
+        int gemstoneLabelWidth = textRenderer.getWidth(gemstoneLabel);
+        context.drawText(textRenderer, Text.literal(gemstoneLabel), 0, 22, cfg.powderLabelColor, true);
+        context.drawText(textRenderer, Text.literal(gemstoneValue), gemstoneLabelWidth, 22, cfg.powderValueColor, true);
+        
+        context.getMatrices().pop();
+    }
+    
+    private void drawColorPreview(DrawContext context, int x, int y, int color) {
+        context.fill(x, y + 2, x + 16, y + 18, 0xFF000000 | color);
+        // Border
+        context.fill(x - 1, y + 1, x + 17, y + 2, 0xFF333333);
+        context.fill(x - 1, y + 18, x + 17, y + 19, 0xFF333333);
+        context.fill(x - 1, y + 1, x, y + 19, 0xFF333333);
+        context.fill(x + 16, y + 1, x + 17, y + 19, 0xFF333333);
+    }
+    
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        ConfigManager.Config cfg = CommissionHudMod.config.getConfig();
+        int previewWidth = 100;
+        int previewHeight = 40;
+        
+        if (mouseX >= cfg.powderX && mouseX <= cfg.powderX + previewWidth * cfg.powderScale && 
+            mouseY >= cfg.powderY && mouseY <= cfg.powderY + previewHeight * cfg.powderScale) {
+            dragging = true;
+            dragX = (int) (mouseX - cfg.powderX);
+            dragY = (int) (mouseY - cfg.powderY);
+            return true;
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+    
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        dragging = false;
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+    
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        if (dragging) {
+            CommissionHudMod.config.setPowderPosition((int) mouseX - dragX, (int) mouseY - dragY);
+            return true;
+        }
+        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+    }
+    
+    @Override
+    public void close() {
+        if (client != null) {
+            client.setScreen(parent);
+        }
+    }
+}

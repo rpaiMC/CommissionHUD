@@ -2,6 +2,7 @@ package com.commissionhud.mixin;
 
 import com.commissionhud.ColorPickerScreen;
 import com.commissionhud.ConfigScreen;
+import com.commissionhud.PowderConfigScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,7 +16,9 @@ public class ScreenMixin {
     @Inject(method = "applyBlur", at = @At("HEAD"), cancellable = true)
     private void commissionhud$disableBlurForColorPicker(CallbackInfo ci) {
         MinecraftClient client = MinecraftClient.getInstance();
-        if (client.currentScreen instanceof ColorPickerScreen || client.currentScreen instanceof ConfigScreen) {
+        if (client.currentScreen instanceof ColorPickerScreen || 
+            client.currentScreen instanceof ConfigScreen ||
+            client.currentScreen instanceof PowderConfigScreen) {
             ci.cancel();
         }
     }

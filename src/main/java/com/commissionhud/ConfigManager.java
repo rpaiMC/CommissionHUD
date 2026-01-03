@@ -91,6 +91,21 @@ public class ConfigManager {
         save();
     }
     
+    // Powder settings
+    public boolean isPowderEnabled() { return config.powderEnabled; }
+    public void setPowderEnabled(boolean enabled) { config.powderEnabled = enabled; save(); }
+    public int getPowderX() { return config.powderX; }
+    public int getPowderY() { return config.powderY; }
+    public void setPowderPosition(int x, int y) { config.powderX = x; config.powderY = y; save(); }
+    public float getPowderScale() { return config.powderScale; }
+    public void setPowderScale(float scale) { config.powderScale = scale; save(); }
+    public int getPowderTitleColor() { return config.powderTitleColor; }
+    public void setPowderTitleColor(int color) { config.powderTitleColor = color; save(); }
+    public int getPowderLabelColor() { return config.powderLabelColor; }
+    public void setPowderLabelColor(int color) { config.powderLabelColor = color; save(); }
+    public int getPowderValueColor() { return config.powderValueColor; }
+    public void setPowderValueColor(int color) { config.powderValueColor = color; save(); }
+    
     public static class Config {
         public boolean enabled = true;
         public float scale = 1.0f;
@@ -101,6 +116,15 @@ public class ConfigManager {
         public boolean showPercentage = true;
         public DisplayMode displayMode = DisplayMode.EVERYWHERE;
         public ProgressFormat progressFormat = ProgressFormat.PERCENTAGE;
+        
+        // Powder display settings
+        public boolean powderEnabled = true;
+        public int powderX = 10;
+        public int powderY = 150;
+        public float powderScale = 1.0f;
+        public int powderTitleColor = 0xFFFFFF; // White
+        public int powderLabelColor = 0xAAAAAA; // Gray
+        public int powderValueColor = 0x55FFFF; // Cyan
     }
     
     public enum ProgressFormat {
