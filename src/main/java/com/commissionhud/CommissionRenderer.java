@@ -21,7 +21,7 @@ public class CommissionRenderer {
         int y = 0;
         
         // Title
-        context.drawText(client.textRenderer, Text.literal("Commissions:"), 0, y, cfg.color, true);
+        context.drawText(client.textRenderer, Text.literal("Commissions:"), 0, y, cfg.titleColor, true);
         y += 12;
         
         // Draw each commission

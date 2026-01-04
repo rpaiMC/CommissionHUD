@@ -89,6 +89,17 @@ public class ConfigScreen extends Screen {
             }
         });
         
+        // Title color picker button
+        addDrawableChild(ButtonWidget.builder(
+            Text.literal("Title Color: #" + String.format("%06X", cfg.titleColor)),
+            button -> {
+                if (client != null) {
+                    client.setScreen(new ColorPickerScreen(this, ColorPickerScreen.ColorType.COMMISSION_TITLE_COLOR));
+                }
+            })
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 5, buttonWidth, buttonHeight)
+            .build());
+        
         // Text color picker button
         addDrawableChild(ButtonWidget.builder(
             Text.literal("Text Color: #" + String.format("%06X", cfg.color)),
@@ -97,7 +108,7 @@ public class ConfigScreen extends Screen {
                     client.setScreen(new ColorPickerScreen(this, ColorPickerScreen.ColorType.TEXT_COLOR));
                 }
             })
-            .dimensions(centerX - buttonWidth / 2, startY + spacing * 5, buttonWidth, buttonHeight)
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 6, buttonWidth, buttonHeight)
             .build());
         
         // Progress bar color picker button
@@ -108,7 +119,7 @@ public class ConfigScreen extends Screen {
                     client.setScreen(new ColorPickerScreen(this, ColorPickerScreen.ColorType.PROGRESS_BAR_COLOR));
                 }
             })
-            .dimensions(centerX - buttonWidth / 2, startY + spacing * 6, buttonWidth, buttonHeight)
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 7, buttonWidth, buttonHeight)
             .build());
         
         // Powder display config button
@@ -119,7 +130,7 @@ public class ConfigScreen extends Screen {
                     client.setScreen(new PowderConfigScreen(this));
                 }
             })
-            .dimensions(centerX - buttonWidth / 2, startY + spacing * 7, buttonWidth, buttonHeight)
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 8, buttonWidth, buttonHeight)
             .build());
         
         // Reset Position button
@@ -128,7 +139,7 @@ public class ConfigScreen extends Screen {
             button -> {
                 CommissionHudMod.config.setPosition(10, 10);
             })
-            .dimensions(centerX - buttonWidth / 2, startY + spacing * 8, buttonWidth, buttonHeight)
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 9, buttonWidth, buttonHeight)
             .build());
         
         // Done button
@@ -147,12 +158,16 @@ public class ConfigScreen extends Screen {
         // Draw color preview squares next to the color buttons
         int colorPreviewX = width / 2 + 105;
         
+        // Title color preview
+        int titleColorY = 35 + 24 * 5;
+        drawColorPreview(context, colorPreviewX, titleColorY, cfg.titleColor);
+        
         // Text color preview
-        int textColorY = 35 + 24 * 5;
+        int textColorY = 35 + 24 * 6;
         drawColorPreview(context, colorPreviewX, textColorY, cfg.color);
         
         // Progress bar color preview
-        int barColorY = 35 + 24 * 6;
+        int barColorY = 35 + 24 * 7;
         drawColorPreview(context, colorPreviewX, barColorY, cfg.progressBarColor);
         
         // Instructions
@@ -181,7 +196,7 @@ public class ConfigScreen extends Screen {
         context.getMatrices().scale(cfg.scale, cfg.scale, 1.0f);
         
         int y = 0;
-        context.drawText(textRenderer, Text.literal("Commissions:"), 0, y, cfg.color, true);
+        context.drawText(textRenderer, Text.literal("Commissions:"), 0, y, cfg.titleColor, true);
         y += 12;
         
         // Example commission 1

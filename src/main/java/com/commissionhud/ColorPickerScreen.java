@@ -41,6 +41,7 @@ public class ColorPickerScreen extends Screen {
     private boolean draggingSlider = false;
     
     public enum ColorType {
+        COMMISSION_TITLE_COLOR("Commission Title Color"),
         TEXT_COLOR("Text Color"),
         PROGRESS_BAR_COLOR("Progress Bar Color"),
         POWDER_TITLE_COLOR("Powder Title Color"),
@@ -65,6 +66,9 @@ public class ColorPickerScreen extends Screen {
         
         // Get current color based on type
         switch (colorType) {
+            case COMMISSION_TITLE_COLOR:
+                this.currentColor = CommissionHudMod.config.getTitleColor();
+                break;
             case TEXT_COLOR:
                 this.currentColor = CommissionHudMod.config.getColor();
                 break;
@@ -131,6 +135,9 @@ public class ColorPickerScreen extends Screen {
         int buttonY = previewY + previewSize + 45;
         addDrawableChild(ButtonWidget.builder(Text.literal("Confirm"), b -> {
             switch (colorType) {
+                case COMMISSION_TITLE_COLOR:
+                    CommissionHudMod.config.setTitleColor(selectedColor);
+                    break;
                 case TEXT_COLOR:
                     CommissionHudMod.config.setColor(selectedColor);
                     break;

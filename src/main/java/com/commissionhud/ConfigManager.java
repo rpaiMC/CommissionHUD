@@ -72,6 +72,8 @@ public class ConfigManager {
     public void setEnabled(boolean enabled) { config.enabled = enabled; save(); }
     public void setScale(float scale) { config.scale = scale; save(); }
     public void setPosition(int x, int y) { config.x = x; config.y = y; save(); }
+    public int getTitleColor() { return config.titleColor; }
+    public void setTitleColor(int color) { config.titleColor = color; save(); }
     public void setColor(int color) { config.color = color; save(); }
     public void setShowPercentage(boolean show) { config.showPercentage = show; save(); }
     public int getProgressBarColor() { return config.progressBarColor; }
@@ -111,7 +113,8 @@ public class ConfigManager {
         public float scale = 1.0f;
         public int x = 10;
         public int y = 10;
-        public int color = 0xFFFFFF; // White
+        public int titleColor = 0xFFFFFF; // White - for "Commissions:" title
+        public int color = 0xFFFFFF; // White - for commission text
         public int progressBarColor = 0xFFAA00; // Gold/Orange
         public boolean showPercentage = true;
         public DisplayMode displayMode = DisplayMode.EVERYWHERE;
