@@ -3,7 +3,6 @@ package com.commissionhud;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.PlayerListEntry;
 import java.util.*;
-import java.util.regex.*;
 
 public class PowderManager {
     private long lastUpdate = 0;
@@ -14,11 +13,6 @@ public class PowderManager {
     private String gemstonePowder = "0";
     private String glacitePowder = "0";
     private boolean foundPowders = false;
-    
-    // Pattern to match powder lines like "Mithril: 1,234" or "Mithril Powder: 1,234"
-    private static final Pattern MITHRIL_PATTERN = Pattern.compile("(?i)mithril(?:\\s+powder)?:\\s*([\\d,]+)");
-    private static final Pattern GEMSTONE_PATTERN = Pattern.compile("(?i)gemstone(?:\\s+powder)?:\\s*([\\d,]+)");
-    private static final Pattern GLACITE_PATTERN = Pattern.compile("(?i)glacite(?:\\s+powder)?:\\s*([\\d,]+)");
     
     public void update() {
         long currentTime = System.currentTimeMillis();
@@ -32,61 +26,91 @@ public class PowderManager {
             return;
         }
         
-        boolean inPowderSection = false;
-        boolean foundPowderHeader = false;
-        
         Collection<PlayerListEntry> playerList = client.getNetworkHandler().getPlayerList();
         
-        for (PlayerListEntry entry : playerList) {
+        // Convert to list and sort to maintain consistent order
+        List<PlayerListEntry> sortedList = new ArrayList<>(playerList);
+        sortedList.sort((a, b) -> {
+            String nameA = a.getProfile().getName();
+            String nameB = b.getProfile().getName();
+            return nameA.compareTo(nameB);
+        });
+        
+        // Build a list of clean text entries
+        List<String> tabLines = new ArrayList<>();
+        for (PlayerListEntry entry : sortedList) {
             if (entry.getDisplayName() == null) {
+                tabLines.add("");
                 continue;
             }
-            
             String displayText = entry.getDisplayName().getString();
             String cleanText = displayText.replaceAll("§[0-9a-fk-or]", "").trim();
+            tabLines.add(cleanText);
+        }
+        
+        // Find the Powders header index
+        int powdersIndex = -1;
+        for (int i = 0; i < tabLines.size(); i++) {
+            String line = tabLines.get(i).toLowerCase();
+            if (line.equals("powders") || line.equals("powders:")) {
+                powdersIndex = i;
+                break;
+            }
+        }
+        
+        if (powdersIndex == -1) {
+            return; // No powders section found
+        }
+        
+        foundPowders = true;
+        
+        // Read the lines after "Powders" header (typically 3 lines: Mithril, Gemstone, Glacite)
+        for (int i = powdersIndex + 1; i < Math.min(powdersIndex + 5, tabLines.size()); i++) {
+            String line = tabLines.get(i);
+            String lowerLine = line.toLowerCase();
             
-            if (cleanText.isEmpty()) {
+            // Stop if we hit another section or empty line
+            if (lowerLine.isEmpty() || isNewSection(lowerLine)) {
+                break;
+            }
+            
+            // Extract the value after the colon
+            String value = extractNumberAfterColon(line);
+            if (value == null) {
                 continue;
             }
             
-            String lowerText = cleanText.toLowerCase();
-            
-            // Check for Powders section header
-            if (lowerText.equals("powders") || lowerText.equals("powders:") || lowerText.equals("powder")) {
-                inPowderSection = true;
-                foundPowderHeader = true;
-                continue;
-            }
-            
-            // Check if we've hit another section (stop parsing)
-            if (inPowderSection && isNewSection(lowerText)) {
-                inPowderSection = false;
-                continue;
-            }
-            
-            // Parse powder values - can be in powders section OR anywhere in tab list
-            Matcher mithrilMatcher = MITHRIL_PATTERN.matcher(cleanText);
-            if (mithrilMatcher.find()) {
-                mithrilPowder = mithrilMatcher.group(1);
-                foundPowders = true;
-            }
-            
-            Matcher gemstoneMatcher = GEMSTONE_PATTERN.matcher(cleanText);
-            if (gemstoneMatcher.find()) {
-                gemstonePowder = gemstoneMatcher.group(1);
-                foundPowders = true;
-            }
-            
-            Matcher glaciteMatcher = GLACITE_PATTERN.matcher(cleanText);
-            if (glaciteMatcher.find()) {
-                glacitePowder = glaciteMatcher.group(1);
-                foundPowders = true;
+            if (lowerLine.startsWith("mithril")) {
+                mithrilPowder = value;
+            } else if (lowerLine.startsWith("gemstone")) {
+                gemstonePowder = value;
+            } else if (lowerLine.startsWith("glacite")) {
+                glacitePowder = value;
             }
         }
     }
     
+    private String extractNumberAfterColon(String text) {
+        int colonIndex = text.indexOf(':');
+        if (colonIndex >= 0 && colonIndex < text.length() - 1) {
+            String afterColon = text.substring(colonIndex + 1).trim();
+            // Extract digits and commas
+            StringBuilder number = new StringBuilder();
+            for (char c : afterColon.toCharArray()) {
+                if (Character.isDigit(c) || c == ',') {
+                    number.append(c);
+                } else if (number.length() > 0) {
+                    break;
+                }
+            }
+            if (number.length() > 0) {
+                return number.toString();
+            }
+        }
+        return null;
+    }
+    
     private boolean isNewSection(String lowerText) {
-        // Common section headers that would end the powders section
         String[] headers = {"commissions", "crystals", "forges", "skills", "stats", 
                            "profile", "players", "info", "pet", "area", "server",
                            "hotm", "heart of the mountain", "pickaxe", "daily"};
