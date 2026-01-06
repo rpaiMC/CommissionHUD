@@ -108,6 +108,36 @@ public class ConfigManager {
     public int getPowderValueColor() { return config.powderValueColor; }
     public void setPowderValueColor(int color) { config.powderValueColor = color; save(); }
     
+    // Pickaxe ability settings
+    public boolean isAbilityEnabled() { return config.abilityEnabled; }
+    public void setAbilityEnabled(boolean enabled) { config.abilityEnabled = enabled; save(); }
+    public int getAbilityX() { return config.abilityX; }
+    public int getAbilityY() { return config.abilityY; }
+    public void setAbilityPosition(int x, int y) { config.abilityX = x; config.abilityY = y; save(); }
+    public float getAbilityScale() { return config.abilityScale; }
+    public void setAbilityScale(float scale) { config.abilityScale = scale; save(); }
+    public int getAbilityTitleColor() { return config.abilityTitleColor; }
+    public void setAbilityTitleColor(int color) { config.abilityTitleColor = color; save(); }
+    public int getAbilityLabelColor() { return config.abilityLabelColor; }
+    public void setAbilityLabelColor(int color) { config.abilityLabelColor = color; save(); }
+    public int getAbilityValueColor() { return config.abilityValueColor; }
+    public void setAbilityValueColor(int color) { config.abilityValueColor = color; save(); }
+    
+    // Flowstate settings
+    public boolean isFlowstateEnabled() { return config.flowstateEnabled; }
+    public void setFlowstateEnabled(boolean enabled) { config.flowstateEnabled = enabled; save(); }
+    public int getFlowstateX() { return config.flowstateX; }
+    public int getFlowstateY() { return config.flowstateY; }
+    public void setFlowstatePosition(int x, int y) { config.flowstateX = x; config.flowstateY = y; save(); }
+    public float getFlowstateScale() { return config.flowstateScale; }
+    public void setFlowstateScale(float scale) { config.flowstateScale = scale; save(); }
+    public int getFlowstateTitleColor() { return config.flowstateTitleColor; }
+    public void setFlowstateTitleColor(int color) { config.flowstateTitleColor = color; save(); }
+    public int getFlowstateLabelColor() { return config.flowstateLabelColor; }
+    public void setFlowstateLabelColor(int color) { config.flowstateLabelColor = color; save(); }
+    public int getFlowstateValueColor() { return config.flowstateValueColor; }
+    public void setFlowstateValueColor(int color) { config.flowstateValueColor = color; save(); }
+    
     public static class Config {
         public boolean enabled = true;
         public float scale = 1.0f;
@@ -128,6 +158,24 @@ public class ConfigManager {
         public int powderTitleColor = 0xFFFFFF; // White
         public int powderLabelColor = 0xAAAAAA; // Gray
         public int powderValueColor = 0x55FFFF; // Cyan
+        
+        // Pickaxe ability display settings
+        public boolean abilityEnabled = true;
+        public int abilityX = 10;
+        public int abilityY = 200;
+        public float abilityScale = 1.0f;
+        public int abilityTitleColor = 0xFFFFFF; // White
+        public int abilityLabelColor = 0xAAAAAA; // Gray
+        public int abilityValueColor = 0xFF5555; // Red for cooldown
+        
+        // Flowstate display settings
+        public boolean flowstateEnabled = true;
+        public int flowstateX = 10;
+        public int flowstateY = 250;
+        public float flowstateScale = 1.0f;
+        public int flowstateTitleColor = 0x55FFFF; // Cyan
+        public int flowstateLabelColor = 0xAAAAAA; // Gray
+        public int flowstateValueColor = 0xFFFFFF; // White
     }
     
     public enum ProgressFormat {

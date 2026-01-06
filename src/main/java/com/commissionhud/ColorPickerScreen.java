@@ -46,7 +46,13 @@ public class ColorPickerScreen extends Screen {
         PROGRESS_BAR_COLOR("Progress Bar Color"),
         POWDER_TITLE_COLOR("Powder Title Color"),
         POWDER_LABEL_COLOR("Powder Label Color"),
-        POWDER_VALUE_COLOR("Powder Value Color");
+        POWDER_VALUE_COLOR("Powder Value Color"),
+        ABILITY_TITLE_COLOR("Ability Title Color"),
+        ABILITY_LABEL_COLOR("Ability Label Color"),
+        ABILITY_VALUE_COLOR("Ability Cooldown Color"),
+        FLOWSTATE_TITLE_COLOR("Flowstate Title Color"),
+        FLOWSTATE_LABEL_COLOR("Flowstate Label Color"),
+        FLOWSTATE_VALUE_COLOR("Flowstate Value Color");
         
         private final String displayName;
         
@@ -83,6 +89,24 @@ public class ColorPickerScreen extends Screen {
                 break;
             case POWDER_VALUE_COLOR:
                 this.currentColor = CommissionHudMod.config.getPowderValueColor();
+                break;
+            case ABILITY_TITLE_COLOR:
+                this.currentColor = CommissionHudMod.config.getAbilityTitleColor();
+                break;
+            case ABILITY_LABEL_COLOR:
+                this.currentColor = CommissionHudMod.config.getAbilityLabelColor();
+                break;
+            case ABILITY_VALUE_COLOR:
+                this.currentColor = CommissionHudMod.config.getAbilityValueColor();
+                break;
+            case FLOWSTATE_TITLE_COLOR:
+                this.currentColor = CommissionHudMod.config.getFlowstateTitleColor();
+                break;
+            case FLOWSTATE_LABEL_COLOR:
+                this.currentColor = CommissionHudMod.config.getFlowstateLabelColor();
+                break;
+            case FLOWSTATE_VALUE_COLOR:
+                this.currentColor = CommissionHudMod.config.getFlowstateValueColor();
                 break;
             default:
                 this.currentColor = 0xFFFFFF;
@@ -152,6 +176,24 @@ public class ColorPickerScreen extends Screen {
                     break;
                 case POWDER_VALUE_COLOR:
                     CommissionHudMod.config.setPowderValueColor(selectedColor);
+                    break;
+                case ABILITY_TITLE_COLOR:
+                    CommissionHudMod.config.setAbilityTitleColor(selectedColor);
+                    break;
+                case ABILITY_LABEL_COLOR:
+                    CommissionHudMod.config.setAbilityLabelColor(selectedColor);
+                    break;
+                case ABILITY_VALUE_COLOR:
+                    CommissionHudMod.config.setAbilityValueColor(selectedColor);
+                    break;
+                case FLOWSTATE_TITLE_COLOR:
+                    CommissionHudMod.config.setFlowstateTitleColor(selectedColor);
+                    break;
+                case FLOWSTATE_LABEL_COLOR:
+                    CommissionHudMod.config.setFlowstateLabelColor(selectedColor);
+                    break;
+                case FLOWSTATE_VALUE_COLOR:
+                    CommissionHudMod.config.setFlowstateValueColor(selectedColor);
                     break;
             }
             close();

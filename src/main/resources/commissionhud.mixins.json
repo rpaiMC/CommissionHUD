@@ -3,9 +3,10 @@
   "package": "com.commissionhud.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "ScreenMixin"
+    "ScreenMixin",
+    "BlockBreakMixin"
   ],
   "injectors": {
-    "defaultRequire": 1
+    "defaultRequire": 0
   }
 }
