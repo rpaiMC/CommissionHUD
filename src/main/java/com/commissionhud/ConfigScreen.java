@@ -74,21 +74,6 @@ public class ConfigScreen extends Screen {
             .dimensions(centerX - buttonWidth / 2, startY + spacing * 3, buttonWidth, buttonHeight)
             .build());
         
-        // Scale slider
-        addDrawableChild(new SliderWidget(centerX - buttonWidth / 2, startY + spacing * 4, buttonWidth, buttonHeight, 
-            Text.literal("Scale: " + String.format("%.1f", cfg.scale)), (cfg.scale - 0.5) / 1.5) {
-            @Override
-            protected void updateMessage() {
-                cfg.scale = (float) (0.5 + value * 1.5);
-                setMessage(Text.literal("Scale: " + String.format("%.1f", cfg.scale)));
-            }
-            
-            @Override
-            protected void applyValue() {
-                CommissionHudMod.config.save();
-            }
-        });
-        
         // Title color picker button
         addDrawableChild(ButtonWidget.builder(
             Text.literal("Title Color: #" + String.format("%06X", cfg.titleColor)),
@@ -97,7 +82,7 @@ public class ConfigScreen extends Screen {
                     client.setScreen(new ColorPickerScreen(this, ColorPickerScreen.ColorType.COMMISSION_TITLE_COLOR));
                 }
             })
-            .dimensions(centerX - buttonWidth / 2, startY + spacing * 5, buttonWidth, buttonHeight)
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 4, buttonWidth, buttonHeight)
             .build());
         
         // Text color picker button
@@ -108,7 +93,7 @@ public class ConfigScreen extends Screen {
                     client.setScreen(new ColorPickerScreen(this, ColorPickerScreen.ColorType.TEXT_COLOR));
                 }
             })
-            .dimensions(centerX - buttonWidth / 2, startY + spacing * 6, buttonWidth, buttonHeight)
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 5, buttonWidth, buttonHeight)
             .build());
         
         // Progress bar color picker button
@@ -119,7 +104,7 @@ public class ConfigScreen extends Screen {
                     client.setScreen(new ColorPickerScreen(this, ColorPickerScreen.ColorType.PROGRESS_BAR_COLOR));
                 }
             })
-            .dimensions(centerX - buttonWidth / 2, startY + spacing * 7, buttonWidth, buttonHeight)
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 6, buttonWidth, buttonHeight)
             .build());
         
         // Powder display config button
@@ -130,16 +115,18 @@ public class ConfigScreen extends Screen {
                     client.setScreen(new PowderConfigScreen(this));
                 }
             })
-            .dimensions(centerX - buttonWidth / 2, startY + spacing * 8, buttonWidth, buttonHeight)
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 7, buttonWidth, buttonHeight)
             .build());
         
-        // Reset Position button
+        // Position & Scale settings button
         addDrawableChild(ButtonWidget.builder(
-            Text.literal("Reset Position"),
+            Text.literal("Position & Scale Settings..."),
             button -> {
-                CommissionHudMod.config.setPosition(10, 10);
+                if (client != null) {
+                    client.setScreen(new PositionScaleScreen(this));
+                }
             })
-            .dimensions(centerX - buttonWidth / 2, startY + spacing * 9, buttonWidth, buttonHeight)
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 8, buttonWidth, buttonHeight)
             .build());
         
         // Done button
@@ -159,15 +146,15 @@ public class ConfigScreen extends Screen {
         int colorPreviewX = width / 2 + 105;
         
         // Title color preview
-        int titleColorY = 35 + 24 * 5;
+        int titleColorY = 35 + 24 * 4;
         drawColorPreview(context, colorPreviewX, titleColorY, cfg.titleColor);
         
         // Text color preview
-        int textColorY = 35 + 24 * 6;
+        int textColorY = 35 + 24 * 5;
         drawColorPreview(context, colorPreviewX, textColorY, cfg.color);
         
         // Progress bar color preview
-        int barColorY = 35 + 24 * 7;
+        int barColorY = 35 + 24 * 6;
         drawColorPreview(context, colorPreviewX, barColorY, cfg.progressBarColor);
         
         // Instructions

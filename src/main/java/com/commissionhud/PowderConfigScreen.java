@@ -2,7 +2,6 @@ package com.commissionhud;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 
@@ -37,21 +36,6 @@ public class PowderConfigScreen extends Screen {
             .dimensions(centerX - buttonWidth / 2, startY, buttonWidth, buttonHeight)
             .build());
         
-        // Scale slider
-        addDrawableChild(new SliderWidget(centerX - buttonWidth / 2, startY + spacing, buttonWidth, buttonHeight, 
-            Text.literal("Scale: " + String.format("%.1f", cfg.powderScale)), (cfg.powderScale - 0.5) / 1.5) {
-            @Override
-            protected void updateMessage() {
-                cfg.powderScale = (float) (0.5 + value * 1.5);
-                setMessage(Text.literal("Scale: " + String.format("%.1f", cfg.powderScale)));
-            }
-            
-            @Override
-            protected void applyValue() {
-                CommissionHudMod.config.save();
-            }
-        });
-        
         // Title color picker button
         addDrawableChild(ButtonWidget.builder(
             Text.literal("Title Color: #" + String.format("%06X", cfg.powderTitleColor)),
@@ -60,7 +44,7 @@ public class PowderConfigScreen extends Screen {
                     client.setScreen(new ColorPickerScreen(this, ColorPickerScreen.ColorType.POWDER_TITLE_COLOR));
                 }
             })
-            .dimensions(centerX - buttonWidth / 2, startY + spacing * 2, buttonWidth, buttonHeight)
+            .dimensions(centerX - buttonWidth / 2, startY + spacing, buttonWidth, buttonHeight)
             .build());
         
         // Label color picker button
@@ -71,7 +55,7 @@ public class PowderConfigScreen extends Screen {
                     client.setScreen(new ColorPickerScreen(this, ColorPickerScreen.ColorType.POWDER_LABEL_COLOR));
                 }
             })
-            .dimensions(centerX - buttonWidth / 2, startY + spacing * 3, buttonWidth, buttonHeight)
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 2, buttonWidth, buttonHeight)
             .build());
         
         // Value color picker button
@@ -82,16 +66,7 @@ public class PowderConfigScreen extends Screen {
                     client.setScreen(new ColorPickerScreen(this, ColorPickerScreen.ColorType.POWDER_VALUE_COLOR));
                 }
             })
-            .dimensions(centerX - buttonWidth / 2, startY + spacing * 4, buttonWidth, buttonHeight)
-            .build());
-        
-        // Reset Position button
-        addDrawableChild(ButtonWidget.builder(
-            Text.literal("Reset Position"),
-            button -> {
-                CommissionHudMod.config.setPowderPosition(10, 150);
-            })
-            .dimensions(centerX - buttonWidth / 2, startY + spacing * 5, buttonWidth, buttonHeight)
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 3, buttonWidth, buttonHeight)
             .build());
         
         // Back button
@@ -111,13 +86,13 @@ public class PowderConfigScreen extends Screen {
         int colorPreviewX = width / 2 + 105;
         
         // Title color preview
-        drawColorPreview(context, colorPreviewX, 35 + 24 * 2, cfg.powderTitleColor);
+        drawColorPreview(context, colorPreviewX, 35 + 24, cfg.powderTitleColor);
         
         // Label color preview
-        drawColorPreview(context, colorPreviewX, 35 + 24 * 3, cfg.powderLabelColor);
+        drawColorPreview(context, colorPreviewX, 35 + 24 * 2, cfg.powderLabelColor);
         
         // Value color preview
-        drawColorPreview(context, colorPreviewX, 35 + 24 * 4, cfg.powderValueColor);
+        drawColorPreview(context, colorPreviewX, 35 + 24 * 3, cfg.powderValueColor);
         
         // Instructions
         context.drawCenteredTextWithShadow(textRenderer, 

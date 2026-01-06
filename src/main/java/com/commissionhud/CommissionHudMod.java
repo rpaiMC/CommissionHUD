@@ -36,7 +36,8 @@ public class CommissionHudMod implements ClientModInitializer {
             if (client.world != null) {
                 // Don't render HUD if config screen is open (we show preview instead)
                 if (client.currentScreen instanceof ConfigScreen || 
-                    client.currentScreen instanceof PowderConfigScreen) {
+                    client.currentScreen instanceof PowderConfigScreen ||
+                    client.currentScreen instanceof PositionScaleScreen) {
                     return;
                 }
                 
