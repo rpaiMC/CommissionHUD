@@ -123,21 +123,6 @@ public class ConfigManager {
     public int getAbilityValueColor() { return config.abilityValueColor; }
     public void setAbilityValueColor(int color) { config.abilityValueColor = color; save(); }
     
-    // Flowstate settings
-    public boolean isFlowstateEnabled() { return config.flowstateEnabled; }
-    public void setFlowstateEnabled(boolean enabled) { config.flowstateEnabled = enabled; save(); }
-    public int getFlowstateX() { return config.flowstateX; }
-    public int getFlowstateY() { return config.flowstateY; }
-    public void setFlowstatePosition(int x, int y) { config.flowstateX = x; config.flowstateY = y; save(); }
-    public float getFlowstateScale() { return config.flowstateScale; }
-    public void setFlowstateScale(float scale) { config.flowstateScale = scale; save(); }
-    public int getFlowstateTitleColor() { return config.flowstateTitleColor; }
-    public void setFlowstateTitleColor(int color) { config.flowstateTitleColor = color; save(); }
-    public int getFlowstateLabelColor() { return config.flowstateLabelColor; }
-    public void setFlowstateLabelColor(int color) { config.flowstateLabelColor = color; save(); }
-    public int getFlowstateValueColor() { return config.flowstateValueColor; }
-    public void setFlowstateValueColor(int color) { config.flowstateValueColor = color; save(); }
-    
     public static class Config {
         public boolean enabled = true;
         public float scale = 1.0f;
@@ -167,15 +152,6 @@ public class ConfigManager {
         public int abilityTitleColor = 0xFFFFFF; // White
         public int abilityLabelColor = 0xAAAAAA; // Gray
         public int abilityValueColor = 0xFF5555; // Red for cooldown
-        
-        // Flowstate display settings
-        public boolean flowstateEnabled = true;
-        public int flowstateX = 10;
-        public int flowstateY = 250;
-        public float flowstateScale = 1.0f;
-        public int flowstateTitleColor = 0x55FFFF; // Cyan
-        public int flowstateLabelColor = 0xAAAAAA; // Gray
-        public int flowstateValueColor = 0xFFFFFF; // White
     }
     
     public enum ProgressFormat {

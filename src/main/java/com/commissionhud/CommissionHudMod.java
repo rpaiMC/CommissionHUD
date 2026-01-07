@@ -14,7 +14,6 @@ public class CommissionHudMod implements ClientModInitializer {
     public static final LocationDetector locationDetector = new LocationDetector();
     public static final PowderManager powderManager = new PowderManager();
     public static final PickaxeAbilityManager abilityManager = new PickaxeAbilityManager();
-    public static final FlowstateManager flowstateManager = new FlowstateManager();
     
     @Override
     public void onInitializeClient() {
@@ -40,7 +39,6 @@ public class CommissionHudMod implements ClientModInitializer {
                 if (client.currentScreen instanceof ConfigScreen || 
                     client.currentScreen instanceof PowderConfigScreen ||
                     client.currentScreen instanceof AbilityConfigScreen ||
-                    client.currentScreen instanceof FlowstateConfigScreen ||
                     client.currentScreen instanceof PositionScaleScreen) {
                     return;
                 }
@@ -48,7 +46,6 @@ public class CommissionHudMod implements ClientModInitializer {
                 // Update managers
                 powderManager.update();
                 abilityManager.update();
-                flowstateManager.update();
                 
                 // Render commission HUD
                 if (config.isEnabled() && shouldDisplayHud()) {
@@ -63,11 +60,6 @@ public class CommissionHudMod implements ClientModInitializer {
                 // Render ability HUD
                 if (config.isAbilityEnabled() && shouldDisplayHud()) {
                     PickaxeAbilityRenderer.render(context, abilityManager);
-                }
-                
-                // Render flowstate HUD
-                if (config.isFlowstateEnabled() && shouldDisplayHud()) {
-                    FlowstateRenderer.render(context, flowstateManager);
                 }
             }
         });

@@ -3,8 +3,8 @@ package com.commissionhud;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.scoreboard.ScoreboardEntry;
+import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.text.Text;
 import java.util.Collection;
 import java.util.regex.Pattern;
@@ -121,7 +121,7 @@ public class LocationDetector {
         Collection<ScoreboardEntry> entries = scoreboard.getScoreboardEntries(sidebarObjective);
         
         for (ScoreboardEntry entry : entries) {
-            // Get the name from the entry
+            // Get the display name from the entry
             String line = entry.name().getString();
             
             // Clean up color codes

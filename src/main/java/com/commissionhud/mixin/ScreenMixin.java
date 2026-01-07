@@ -4,7 +4,6 @@ import com.commissionhud.ColorPickerScreen;
 import com.commissionhud.ConfigScreen;
 import com.commissionhud.PowderConfigScreen;
 import com.commissionhud.AbilityConfigScreen;
-import com.commissionhud.FlowstateConfigScreen;
 import com.commissionhud.PositionScaleScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -23,7 +22,6 @@ public class ScreenMixin {
             client.currentScreen instanceof ConfigScreen ||
             client.currentScreen instanceof PowderConfigScreen ||
             client.currentScreen instanceof AbilityConfigScreen ||
-            client.currentScreen instanceof FlowstateConfigScreen ||
             client.currentScreen instanceof PositionScaleScreen) {
             ci.cancel();
         }
