@@ -41,11 +41,47 @@ public class PowderRenderer {
         
         // Glacite Powder (only show if non-zero)
         String glaciteValue = powderManager.getGlacitePowder();
-        if (!glaciteValue.equals("0")) {
+        boolean hasGlacite = !glaciteValue.equals("0");
+        if (hasGlacite) {
             String glaciteLabel = "Glacite: ";
             int glaciteLabelWidth = client.textRenderer.getWidth(glaciteLabel);
             context.drawText(client.textRenderer, Text.literal(glaciteLabel), 0, y, cfg.powderLabelColor, true);
             context.drawText(client.textRenderer, Text.literal(glaciteValue), glaciteLabelWidth, y, cfg.powderValueColor, true);
+            y += 10;
+        }
+        
+        // Powder Calculator rates (only show when enabled and tracking)
+        if (cfg.powderCalcEnabled && powderManager.isTracking()) {
+            int interval = cfg.powderCalcInterval;
+            String intervalLabel = CommissionHudMod.config.getPowderCalcIntervalLabel();
+            
+            // Show rates after a brief delay (1 second minimum)
+            if (powderManager.getTrackingDurationMs() >= 1000) {
+                // Mithril rate
+                String mithrilRateLabel = "Mithril" + intervalLabel + ": ";
+                String mithrilRateValue = "+" + powderManager.getMithrilRate(interval);
+                int mithrilRateLabelWidth = client.textRenderer.getWidth(mithrilRateLabel);
+                context.drawText(client.textRenderer, Text.literal(mithrilRateLabel), 0, y, cfg.powderLabelColor, true);
+                context.drawText(client.textRenderer, Text.literal(mithrilRateValue), mithrilRateLabelWidth, y, 0x55FF55, true);
+                y += 10;
+                
+                // Gemstone rate
+                String gemstoneRateLabel = "Gemstone" + intervalLabel + ": ";
+                String gemstoneRateValue = "+" + powderManager.getGemstoneRate(interval);
+                int gemstoneRateLabelWidth = client.textRenderer.getWidth(gemstoneRateLabel);
+                context.drawText(client.textRenderer, Text.literal(gemstoneRateLabel), 0, y, cfg.powderLabelColor, true);
+                context.drawText(client.textRenderer, Text.literal(gemstoneRateValue), gemstoneRateLabelWidth, y, 0x55FF55, true);
+                y += 10;
+                
+                // Glacite rate (only show if glacite powder exists)
+                if (hasGlacite) {
+                    String glaciteRateLabel = "Glacite" + intervalLabel + ": ";
+                    String glaciteRateValue = "+" + powderManager.getGlaciteRate(interval);
+                    int glaciteRateLabelWidth = client.textRenderer.getWidth(glaciteRateLabel);
+                    context.drawText(client.textRenderer, Text.literal(glaciteRateLabel), 0, y, cfg.powderLabelColor, true);
+                    context.drawText(client.textRenderer, Text.literal(glaciteRateValue), glaciteRateLabelWidth, y, 0x55FF55, true);
+                }
+            }
         }
         
         context.getMatrices().pop();

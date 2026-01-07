@@ -199,7 +199,11 @@ public class ConfigScreen extends Screen {
         
         super.render(context, mouseX, mouseY, delta);
         
-        // Render HUD preview with 3 example commissions
+        // Get actual commission count (minimum 2 for preview)
+        int commissionCount = Math.max(2, CommissionHudMod.commissionManager.getActiveCommissions().size());
+        if (commissionCount > 4) commissionCount = 4; // Cap at 4
+        
+        // Render HUD preview with dynamic number of example commissions
         context.getMatrices().push();
         context.getMatrices().translate(cfg.x, cfg.y, 0);
         context.getMatrices().scale(cfg.scale, cfg.scale, 1.0f);
@@ -208,39 +212,36 @@ public class ConfigScreen extends Screen {
         context.drawText(textRenderer, Text.literal("Commissions:"), 0, y, cfg.titleColor, true);
         y += 12;
         
-        // Example commission 1
-        String example1 = "• Mithril Miner";
-        if (cfg.showPercentage) {
-            example1 += cfg.progressFormat == ConfigManager.ProgressFormat.PERCENTAGE ? ": 45%" : ": 158/350";
-        }
-        context.drawText(textRenderer, Text.literal(example1), 0, y, cfg.color, true);
-        if (cfg.showPercentage) {
-            context.fill(0, y + 9, 100, y + 11, 0x88000000);
-            context.fill(0, y + 9, 45, y + 11, 0xFF000000 | cfg.progressBarColor);
-        }
-        y += cfg.showPercentage ? 14 : 10;
+        // Example commission data
+        String[][] exampleCommissions = {
+            {"Mithril Miner", "45", "158/350"},
+            {"Goblin Slayer", "80", "80/100"},
+            {"Titanium Miner", "100", "15/15"},
+            {"Golden Goblin", "25", "1/4"}
+        };
+        int[] exampleColors = {cfg.color, 0xFFFF55, 0x55FF55, cfg.color};
         
-        // Example commission 2
-        String example2 = "• Goblin Slayer";
-        if (cfg.showPercentage) {
-            example2 += cfg.progressFormat == ConfigManager.ProgressFormat.PERCENTAGE ? ": 80%" : ": 80/100";
-        }
-        context.drawText(textRenderer, Text.literal(example2), 0, y, 0xFFFF55, true); // Yellow - almost done
-        if (cfg.showPercentage) {
-            context.fill(0, y + 9, 100, y + 11, 0x88000000);
-            context.fill(0, y + 9, 80, y + 11, 0xFF000000 | cfg.progressBarColor);
-        }
-        y += cfg.showPercentage ? 14 : 10;
-        
-        // Example commission 3
-        String example3 = "• Titanium Miner";
-        if (cfg.showPercentage) {
-            example3 += cfg.progressFormat == ConfigManager.ProgressFormat.PERCENTAGE ? ": 100%" : ": 15/15";
-        }
-        context.drawText(textRenderer, Text.literal(example3), 0, y, 0x55FF55, true); // Green - complete
-        if (cfg.showPercentage) {
-            context.fill(0, y + 9, 100, y + 11, 0x88000000);
-            context.fill(0, y + 9, 100, y + 11, 0xFF55FF55); // Green bar for complete
+        for (int i = 0; i < commissionCount; i++) {
+            String name = exampleCommissions[i][0];
+            String percent = exampleCommissions[i][1];
+            String fraction = exampleCommissions[i][2];
+            int color = exampleColors[i];
+            int progress = Integer.parseInt(percent);
+            
+            String commissionText = "• " + name;
+            if (cfg.showPercentage) {
+                commissionText += cfg.progressFormat == ConfigManager.ProgressFormat.PERCENTAGE 
+                    ? ": " + percent + "%" 
+                    : ": " + fraction;
+            }
+            context.drawText(textRenderer, Text.literal(commissionText), 0, y, color, true);
+            
+            if (cfg.showPercentage) {
+                context.fill(0, y + 9, 100, y + 11, 0x88000000);
+                int barColor = progress >= 100 ? 0xFF55FF55 : (0xFF000000 | cfg.progressBarColor);
+                context.fill(0, y + 9, progress, y + 11, barColor);
+            }
+            y += cfg.showPercentage ? 14 : 10;
         }
         
         context.getMatrices().pop();

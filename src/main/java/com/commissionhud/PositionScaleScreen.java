@@ -120,6 +120,10 @@ public class PositionScaleScreen extends Screen {
     }
     
     private void renderCommissionPreview(DrawContext context, ConfigManager.Config cfg) {
+        // Get actual commission count (minimum 2 for preview)
+        int commissionCount = Math.max(2, CommissionHudMod.commissionManager.getActiveCommissions().size());
+        if (commissionCount > 4) commissionCount = 4; // Cap at 4
+        
         context.getMatrices().push();
         context.getMatrices().translate(cfg.x, cfg.y, 0);
         context.getMatrices().scale(cfg.scale, cfg.scale, 1.0f);
@@ -128,27 +132,36 @@ public class PositionScaleScreen extends Screen {
         context.drawText(textRenderer, Text.literal("Commissions:"), 0, y, cfg.titleColor, true);
         y += 12;
         
-        // Example commission 1
-        String example1 = "• Mithril Miner";
-        if (cfg.showPercentage) {
-            example1 += cfg.progressFormat == ConfigManager.ProgressFormat.PERCENTAGE ? ": 45%" : ": 158/350";
-        }
-        context.drawText(textRenderer, Text.literal(example1), 0, y, cfg.color, true);
-        if (cfg.showPercentage) {
-            context.fill(0, y + 9, 100, y + 11, 0x88000000);
-            context.fill(0, y + 9, 45, y + 11, 0xFF000000 | cfg.progressBarColor);
-        }
-        y += cfg.showPercentage ? 14 : 10;
+        // Example commission data
+        String[][] exampleCommissions = {
+            {"Mithril Miner", "45", "158/350"},
+            {"Goblin Slayer", "80", "80/100"},
+            {"Titanium Miner", "100", "15/15"},
+            {"Golden Goblin", "25", "1/4"}
+        };
+        int[] exampleColors = {cfg.color, 0xFFFF55, 0x55FF55, cfg.color};
         
-        // Example commission 2
-        String example2 = "• Goblin Slayer";
-        if (cfg.showPercentage) {
-            example2 += cfg.progressFormat == ConfigManager.ProgressFormat.PERCENTAGE ? ": 80%" : ": 80/100";
-        }
-        context.drawText(textRenderer, Text.literal(example2), 0, y, 0xFFFF55, true);
-        if (cfg.showPercentage) {
-            context.fill(0, y + 9, 100, y + 11, 0x88000000);
-            context.fill(0, y + 9, 80, y + 11, 0xFF000000 | cfg.progressBarColor);
+        for (int i = 0; i < commissionCount; i++) {
+            String name = exampleCommissions[i][0];
+            String percent = exampleCommissions[i][1];
+            String fraction = exampleCommissions[i][2];
+            int color = exampleColors[i];
+            int progress = Integer.parseInt(percent);
+            
+            String commissionText = "• " + name;
+            if (cfg.showPercentage) {
+                commissionText += cfg.progressFormat == ConfigManager.ProgressFormat.PERCENTAGE 
+                    ? ": " + percent + "%" 
+                    : ": " + fraction;
+            }
+            context.drawText(textRenderer, Text.literal(commissionText), 0, y, color, true);
+            
+            if (cfg.showPercentage) {
+                context.fill(0, y + 9, 100, y + 11, 0x88000000);
+                int barColor = progress >= 100 ? 0xFF55FF55 : (0xFF000000 | cfg.progressBarColor);
+                context.fill(0, y + 9, progress, y + 11, barColor);
+            }
+            y += cfg.showPercentage ? 14 : 10;
         }
         
         context.getMatrices().pop();
@@ -172,6 +185,26 @@ public class PositionScaleScreen extends Screen {
         int gemstoneLabelWidth = textRenderer.getWidth(gemstoneLabel);
         context.drawText(textRenderer, Text.literal(gemstoneLabel), 0, 22, cfg.powderLabelColor, true);
         context.drawText(textRenderer, Text.literal(gemstoneValue), gemstoneLabelWidth, 22, cfg.powderValueColor, true);
+        
+        int nextY = 32;
+        
+        // Show calculator preview only when enabled
+        if (cfg.powderCalcEnabled) {
+            String intervalLabel = CommissionHudMod.config.getPowderCalcIntervalLabel();
+            
+            String mithrilRateLabel = "Mithril" + intervalLabel + ": ";
+            String mithrilRateValue = "+5,432";
+            int mithrilRateLabelWidth = textRenderer.getWidth(mithrilRateLabel);
+            context.drawText(textRenderer, Text.literal(mithrilRateLabel), 0, nextY, cfg.powderLabelColor, true);
+            context.drawText(textRenderer, Text.literal(mithrilRateValue), mithrilRateLabelWidth, nextY, 0x55FF55, true);
+            nextY += 10;
+            
+            String gemstoneRateLabel = "Gemstone" + intervalLabel + ": ";
+            String gemstoneRateValue = "+2,100";
+            int gemstoneRateLabelWidth = textRenderer.getWidth(gemstoneRateLabel);
+            context.drawText(textRenderer, Text.literal(gemstoneRateLabel), 0, nextY, cfg.powderLabelColor, true);
+            context.drawText(textRenderer, Text.literal(gemstoneRateValue), gemstoneRateLabelWidth, nextY, 0x55FF55, true);
+        }
         
         context.getMatrices().pop();
     }
@@ -218,11 +251,17 @@ public class PositionScaleScreen extends Screen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         ConfigManager.Config cfg = CommissionHudMod.config.getConfig();
         
+        // Get actual commission count for hitbox calculation
+        int commissionCount = Math.max(2, CommissionHudMod.commissionManager.getActiveCommissions().size());
+        if (commissionCount > 4) commissionCount = 4;
+        int lineHeight = cfg.showPercentage ? 14 : 10;
+        int commissionHeight = 12 + (commissionCount * lineHeight);
+        
         // Check commission preview
         int commissionWidth = (int)(120 * cfg.scale);
-        int commissionHeight = (int)(45 * cfg.scale);
+        int scaledCommissionHeight = (int)(commissionHeight * cfg.scale);
         if (mouseX >= cfg.x && mouseX <= cfg.x + commissionWidth &&
-            mouseY >= cfg.y && mouseY <= cfg.y + commissionHeight) {
+            mouseY >= cfg.y && mouseY <= cfg.y + scaledCommissionHeight) {
             dragging = DragTarget.COMMISSION;
             dragOffsetX = (int)(mouseX - cfg.x);
             dragOffsetY = (int)(mouseY - cfg.y);
@@ -230,8 +269,8 @@ public class PositionScaleScreen extends Screen {
         }
         
         // Check powder preview
-        int powderWidth = (int)(100 * cfg.powderScale);
-        int powderHeight = (int)(35 * cfg.powderScale);
+        int powderWidth = (int)(120 * cfg.powderScale);
+        int powderHeight = cfg.powderCalcEnabled ? (int)(55 * cfg.powderScale) : (int)(35 * cfg.powderScale);
         if (mouseX >= cfg.powderX && mouseX <= cfg.powderX + powderWidth &&
             mouseY >= cfg.powderY && mouseY <= cfg.powderY + powderHeight) {
             dragging = DragTarget.POWDER;

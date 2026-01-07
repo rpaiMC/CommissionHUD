@@ -14,6 +14,13 @@ public class PowderManager {
     private String glacitePowder = "0";
     private boolean foundPowders = false;
     
+    // Powder calculator tracking
+    private long trackingStartTime = 0;
+    private long startMithril = 0;
+    private long startGemstone = 0;
+    private long startGlacite = 0;
+    private boolean isTracking = false;
+    
     public void update() {
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastUpdate < UPDATE_INTERVAL) {
@@ -88,6 +95,13 @@ public class PowderManager {
                 glacitePowder = value;
             }
         }
+        
+        // Start tracking if enabled and not already tracking
+        if (CommissionHudMod.config.isPowderCalcEnabled() && !isTracking) {
+            startTracking();
+        } else if (!CommissionHudMod.config.isPowderCalcEnabled() && isTracking) {
+            stopTracking();
+        }
     }
     
     private String extractNumberAfterColon(String text) {
@@ -121,6 +135,96 @@ public class PowderManager {
             }
         }
         return false;
+    }
+    
+    // Convert string with commas to long
+    private long parseNumber(String str) {
+        try {
+            return Long.parseLong(str.replace(",", ""));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+    
+    // Format number with commas
+    private String formatNumber(long num) {
+        return String.format("%,d", num);
+    }
+    
+    public void startTracking() {
+        trackingStartTime = System.currentTimeMillis();
+        startMithril = parseNumber(mithrilPowder);
+        startGemstone = parseNumber(gemstonePowder);
+        startGlacite = parseNumber(glacitePowder);
+        isTracking = true;
+    }
+    
+    public void stopTracking() {
+        isTracking = false;
+    }
+    
+    public void resetTracking() {
+        // Only reset if we have valid powder data
+        if (foundPowders) {
+            trackingStartTime = System.currentTimeMillis();
+            startMithril = parseNumber(mithrilPowder);
+            startGemstone = parseNumber(gemstonePowder);
+            startGlacite = parseNumber(glacitePowder);
+        }
+        // Keep isTracking true so it continues to show
+    }
+    
+    public boolean isTracking() {
+        return isTracking && foundPowders;
+    }
+    
+    public long getTrackingDurationMs() {
+        if (!isTracking) return 0;
+        return System.currentTimeMillis() - trackingStartTime;
+    }
+    
+    // Get powder gained since tracking started
+    public long getMithrilGained() {
+        if (!isTracking) return 0;
+        return parseNumber(mithrilPowder) - startMithril;
+    }
+    
+    public long getGemstoneGained() {
+        if (!isTracking) return 0;
+        return parseNumber(gemstonePowder) - startGemstone;
+    }
+    
+    public long getGlaciteGained() {
+        if (!isTracking) return 0;
+        return parseNumber(glacitePowder) - startGlacite;
+    }
+    
+    // Get powder rate per time interval (in minutes)
+    public String getMithrilRate(int minutes) {
+        long gained = getMithrilGained();
+        long durationMs = getTrackingDurationMs();
+        if (durationMs < 1000) return "0"; // Need at least 1 second of data
+        
+        double rate = (gained * minutes * 60.0 * 1000.0) / durationMs;
+        return formatNumber(Math.round(rate));
+    }
+    
+    public String getGemstoneRate(int minutes) {
+        long gained = getGemstoneGained();
+        long durationMs = getTrackingDurationMs();
+        if (durationMs < 1000) return "0";
+        
+        double rate = (gained * minutes * 60.0 * 1000.0) / durationMs;
+        return formatNumber(Math.round(rate));
+    }
+    
+    public String getGlaciteRate(int minutes) {
+        long gained = getGlaciteGained();
+        long durationMs = getTrackingDurationMs();
+        if (durationMs < 1000) return "0";
+        
+        double rate = (gained * minutes * 60.0 * 1000.0) / durationMs;
+        return formatNumber(Math.round(rate));
     }
     
     public String getMithrilPowder() {

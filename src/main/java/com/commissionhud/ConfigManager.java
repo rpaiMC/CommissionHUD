@@ -108,6 +108,32 @@ public class ConfigManager {
     public int getPowderValueColor() { return config.powderValueColor; }
     public void setPowderValueColor(int color) { config.powderValueColor = color; save(); }
     
+    // Powder calculator settings
+    public boolean isPowderCalcEnabled() { return config.powderCalcEnabled; }
+    public void setPowderCalcEnabled(boolean enabled) { config.powderCalcEnabled = enabled; save(); }
+    public int getPowderCalcInterval() { return config.powderCalcInterval; }
+    public void setPowderCalcInterval(int minutes) { config.powderCalcInterval = minutes; save(); }
+    
+    public void cyclePowderCalcInterval() {
+        // Cycle through: 10 -> 30 -> 60 -> 10
+        if (config.powderCalcInterval == 10) {
+            config.powderCalcInterval = 30;
+        } else if (config.powderCalcInterval == 30) {
+            config.powderCalcInterval = 60;
+        } else {
+            config.powderCalcInterval = 10;
+        }
+        save();
+    }
+    
+    public String getPowderCalcIntervalLabel() {
+        if (config.powderCalcInterval == 60) {
+            return "/hr";
+        } else {
+            return "/" + config.powderCalcInterval + "m";
+        }
+    }
+    
     // Pickaxe ability settings
     public boolean isAbilityEnabled() { return config.abilityEnabled; }
     public void setAbilityEnabled(boolean enabled) { config.abilityEnabled = enabled; save(); }
@@ -156,6 +182,10 @@ public class ConfigManager {
         public int powderTitleColor = 0xFFFFFF; // White
         public int powderLabelColor = 0xAAAAAA; // Gray
         public int powderValueColor = 0x55FFFF; // Cyan
+        
+        // Powder calculator settings
+        public boolean powderCalcEnabled = false;
+        public int powderCalcInterval = 60; // Default to 1 hour (60 minutes)
         
         // Pickaxe ability display settings
         public boolean abilityEnabled = true;
