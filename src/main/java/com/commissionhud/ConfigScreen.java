@@ -129,6 +129,17 @@ public class ConfigScreen extends Screen {
             .dimensions(centerX - buttonWidth / 2, startY + spacing * 8, buttonWidth, buttonHeight)
             .build());
         
+        // Stats display config button
+        addDrawableChild(ButtonWidget.builder(
+            Text.literal("Stats Display Settings..."),
+            button -> {
+                if (client != null) {
+                    client.setScreen(new StatsConfigScreen(this));
+                }
+            })
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 9, buttonWidth, buttonHeight)
+            .build());
+        
         // Position & Scale settings button
         addDrawableChild(ButtonWidget.builder(
             Text.literal("Position & Scale Settings..."),
@@ -137,7 +148,7 @@ public class ConfigScreen extends Screen {
                     client.setScreen(new PositionScaleScreen(this));
                 }
             })
-            .dimensions(centerX - buttonWidth / 2, startY + spacing * 9, buttonWidth, buttonHeight)
+            .dimensions(centerX - buttonWidth / 2, startY + spacing * 10, buttonWidth, buttonHeight)
             .build());
         
         // Done button

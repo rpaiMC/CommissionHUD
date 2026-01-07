@@ -10,7 +10,7 @@ public class PositionScaleScreen extends Screen {
     private final Screen parent;
     
     // Dragging state
-    private enum DragTarget { NONE, COMMISSION, POWDER, ABILITY }
+    private enum DragTarget { NONE, COMMISSION, POWDER, ABILITY, STATS }
     private DragTarget dragging = DragTarget.NONE;
     private int dragOffsetX, dragOffsetY;
     
@@ -24,72 +24,79 @@ public class PositionScaleScreen extends Screen {
         ConfigManager.Config cfg = CommissionHudMod.config.getConfig();
         
         int centerX = width / 2;
-        int buttonWidth = 120;
+        int buttonWidth = 100;
         int buttonHeight = 20;
-        int sliderWidth = 120;
+        int sliderWidth = 100;
         
-        // Left side - Commission settings
-        int leftX = centerX - 180;
+        // Row 1: Commission and Powder
+        int row1Y = height - 95;
+        int leftX = centerX - 160;
+        int rightX = centerX + 160;
         
-        addDrawableChild(new SliderWidget(leftX - sliderWidth / 2, height - 75, sliderWidth, buttonHeight,
-            Text.literal("Comm Scale: " + String.format("%.1f", cfg.scale)), (cfg.scale - 0.5) / 1.5) {
+        // Commission scale
+        addDrawableChild(new SliderWidget(leftX - sliderWidth / 2, row1Y, sliderWidth, buttonHeight,
+            Text.literal("Comm: " + String.format("%.1f", cfg.scale)), (cfg.scale - 0.5) / 1.5) {
             @Override
             protected void updateMessage() {
                 cfg.scale = (float) (0.5 + value * 1.5);
-                setMessage(Text.literal("Comm Scale: " + String.format("%.1f", cfg.scale)));
+                setMessage(Text.literal("Comm: " + String.format("%.1f", cfg.scale)));
             }
-            
             @Override
-            protected void applyValue() {
-                CommissionHudMod.config.save();
-            }
+            protected void applyValue() { CommissionHudMod.config.save(); }
         });
-        
-        addDrawableChild(ButtonWidget.builder(Text.literal("Reset Comm"), button -> {
+        addDrawableChild(ButtonWidget.builder(Text.literal("Reset"), button -> {
             CommissionHudMod.config.setPosition(10, 10);
-        }).dimensions(leftX - buttonWidth / 2, height - 50, buttonWidth, buttonHeight).build());
+        }).dimensions(leftX + sliderWidth / 2 + 5, row1Y, 60, buttonHeight).build());
         
-        // Center - Powder settings
-        addDrawableChild(new SliderWidget(centerX - sliderWidth / 2, height - 75, sliderWidth, buttonHeight,
-            Text.literal("Powder Scale: " + String.format("%.1f", cfg.powderScale)), (cfg.powderScale - 0.5) / 1.5) {
+        // Powder scale
+        addDrawableChild(new SliderWidget(rightX - sliderWidth / 2, row1Y, sliderWidth, buttonHeight,
+            Text.literal("Powder: " + String.format("%.1f", cfg.powderScale)), (cfg.powderScale - 0.5) / 1.5) {
             @Override
             protected void updateMessage() {
                 cfg.powderScale = (float) (0.5 + value * 1.5);
-                setMessage(Text.literal("Powder Scale: " + String.format("%.1f", cfg.powderScale)));
+                setMessage(Text.literal("Powder: " + String.format("%.1f", cfg.powderScale)));
             }
-            
             @Override
-            protected void applyValue() {
-                CommissionHudMod.config.save();
-            }
+            protected void applyValue() { CommissionHudMod.config.save(); }
         });
-        
-        addDrawableChild(ButtonWidget.builder(Text.literal("Reset Powder"), button -> {
+        addDrawableChild(ButtonWidget.builder(Text.literal("Reset"), button -> {
             CommissionHudMod.config.setPowderPosition(10, 150);
-        }).dimensions(centerX - buttonWidth / 2, height - 50, buttonWidth, buttonHeight).build());
+        }).dimensions(rightX + sliderWidth / 2 + 5, row1Y, 60, buttonHeight).build());
         
-        // Right side - Ability settings
-        int rightX = centerX + 180;
+        // Row 2: Ability and Stats
+        int row2Y = height - 70;
         
-        addDrawableChild(new SliderWidget(rightX - sliderWidth / 2, height - 75, sliderWidth, buttonHeight,
-            Text.literal("Ability Scale: " + String.format("%.1f", cfg.abilityScale)), (cfg.abilityScale - 0.5) / 1.5) {
+        // Ability scale
+        addDrawableChild(new SliderWidget(leftX - sliderWidth / 2, row2Y, sliderWidth, buttonHeight,
+            Text.literal("Ability: " + String.format("%.1f", cfg.abilityScale)), (cfg.abilityScale - 0.5) / 1.5) {
             @Override
             protected void updateMessage() {
                 cfg.abilityScale = (float) (0.5 + value * 1.5);
-                setMessage(Text.literal("Ability Scale: " + String.format("%.1f", cfg.abilityScale)));
+                setMessage(Text.literal("Ability: " + String.format("%.1f", cfg.abilityScale)));
             }
-            
             @Override
-            protected void applyValue() {
-                CommissionHudMod.config.save();
-            }
+            protected void applyValue() { CommissionHudMod.config.save(); }
         });
-        
-        addDrawableChild(ButtonWidget.builder(Text.literal("Reset Ability"), button -> {
+        addDrawableChild(ButtonWidget.builder(Text.literal("Reset"), button -> {
             CommissionHudMod.config.setAbilityPosition(10, 200);
-        }).dimensions(rightX - buttonWidth / 2, height - 50, buttonWidth, buttonHeight).build());
+        }).dimensions(leftX + sliderWidth / 2 + 5, row2Y, 60, buttonHeight).build());
         
-        // Back button - center bottom
+        // Stats scale
+        addDrawableChild(new SliderWidget(rightX - sliderWidth / 2, row2Y, sliderWidth, buttonHeight,
+            Text.literal("Stats: " + String.format("%.1f", cfg.statsScale)), (cfg.statsScale - 0.5) / 1.5) {
+            @Override
+            protected void updateMessage() {
+                cfg.statsScale = (float) (0.5 + value * 1.5);
+                setMessage(Text.literal("Stats: " + String.format("%.1f", cfg.statsScale)));
+            }
+            @Override
+            protected void applyValue() { CommissionHudMod.config.save(); }
+        });
+        addDrawableChild(ButtonWidget.builder(Text.literal("Reset"), button -> {
+            CommissionHudMod.config.setStatsPosition(10, 250);
+        }).dimensions(rightX + sliderWidth / 2 + 5, row2Y, 60, buttonHeight).build());
+        
+        // Done button
         addDrawableChild(ButtonWidget.builder(Text.literal("Done"), button -> close())
             .dimensions(centerX - 50, height - 25, 100, buttonHeight)
             .build());
@@ -105,14 +112,11 @@ public class PositionScaleScreen extends Screen {
         
         super.render(context, mouseX, mouseY, delta);
         
-        // Render Commission preview
+        // Render all previews
         renderCommissionPreview(context, cfg);
-        
-        // Render Powder preview
         renderPowderPreview(context, cfg);
-        
-        // Render Ability preview
         renderAbilityPreview(context, cfg);
+        renderStatsPreview(context, cfg);
     }
     
     private void renderCommissionPreview(DrawContext context, ConfigManager.Config cfg) {
@@ -145,18 +149,6 @@ public class PositionScaleScreen extends Screen {
         if (cfg.showPercentage) {
             context.fill(0, y + 9, 100, y + 11, 0x88000000);
             context.fill(0, y + 9, 80, y + 11, 0xFF000000 | cfg.progressBarColor);
-        }
-        y += cfg.showPercentage ? 14 : 10;
-        
-        // Example commission 3
-        String example3 = "• Titanium Miner";
-        if (cfg.showPercentage) {
-            example3 += cfg.progressFormat == ConfigManager.ProgressFormat.PERCENTAGE ? ": 100%" : ": 15/15";
-        }
-        context.drawText(textRenderer, Text.literal(example3), 0, y, 0x55FF55, true);
-        if (cfg.showPercentage) {
-            context.fill(0, y + 9, 100, y + 11, 0x88000000);
-            context.fill(0, y + 9, 100, y + 11, 0xFF55FF55);
         }
         
         context.getMatrices().pop();
@@ -200,13 +192,35 @@ public class PositionScaleScreen extends Screen {
         context.getMatrices().pop();
     }
     
+    private void renderStatsPreview(DrawContext context, ConfigManager.Config cfg) {
+        context.getMatrices().push();
+        context.getMatrices().translate(cfg.statsX, cfg.statsY, 0);
+        context.getMatrices().scale(cfg.statsScale, cfg.statsScale, 1.0f);
+        
+        context.drawText(textRenderer, Text.literal("Stats:"), 0, 0, cfg.statsTitleColor, true);
+        
+        String miningLabel = "Mining Speed: ";
+        String miningValue = "⸕1549";
+        int miningLabelWidth = textRenderer.getWidth(miningLabel);
+        context.drawText(textRenderer, Text.literal(miningLabel), 0, 12, cfg.statsLabelColor, true);
+        context.drawText(textRenderer, Text.literal(miningValue), miningLabelWidth, 12, 0xFFAA00, true);
+        
+        String fortuneLabel = "Mining Fortune: ";
+        String fortuneValue = "☘850";
+        int fortuneLabelWidth = textRenderer.getWidth(fortuneLabel);
+        context.drawText(textRenderer, Text.literal(fortuneLabel), 0, 22, cfg.statsLabelColor, true);
+        context.drawText(textRenderer, Text.literal(fortuneValue), fortuneLabelWidth, 22, 0xFFAA00, true);
+        
+        context.getMatrices().pop();
+    }
+    
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         ConfigManager.Config cfg = CommissionHudMod.config.getConfig();
         
-        // Check if clicking on commission preview
+        // Check commission preview
         int commissionWidth = (int)(120 * cfg.scale);
-        int commissionHeight = (int)(60 * cfg.scale);
+        int commissionHeight = (int)(45 * cfg.scale);
         if (mouseX >= cfg.x && mouseX <= cfg.x + commissionWidth &&
             mouseY >= cfg.y && mouseY <= cfg.y + commissionHeight) {
             dragging = DragTarget.COMMISSION;
@@ -215,7 +229,7 @@ public class PositionScaleScreen extends Screen {
             return true;
         }
         
-        // Check if clicking on powder preview
+        // Check powder preview
         int powderWidth = (int)(100 * cfg.powderScale);
         int powderHeight = (int)(35 * cfg.powderScale);
         if (mouseX >= cfg.powderX && mouseX <= cfg.powderX + powderWidth &&
@@ -226,7 +240,7 @@ public class PositionScaleScreen extends Screen {
             return true;
         }
         
-        // Check if clicking on ability preview
+        // Check ability preview
         int abilityWidth = (int)(120 * cfg.abilityScale);
         int abilityHeight = (int)(25 * cfg.abilityScale);
         if (mouseX >= cfg.abilityX && mouseX <= cfg.abilityX + abilityWidth &&
@@ -234,6 +248,17 @@ public class PositionScaleScreen extends Screen {
             dragging = DragTarget.ABILITY;
             dragOffsetX = (int)(mouseX - cfg.abilityX);
             dragOffsetY = (int)(mouseY - cfg.abilityY);
+            return true;
+        }
+        
+        // Check stats preview
+        int statsWidth = (int)(130 * cfg.statsScale);
+        int statsHeight = (int)(35 * cfg.statsScale);
+        if (mouseX >= cfg.statsX && mouseX <= cfg.statsX + statsWidth &&
+            mouseY >= cfg.statsY && mouseY <= cfg.statsY + statsHeight) {
+            dragging = DragTarget.STATS;
+            dragOffsetX = (int)(mouseX - cfg.statsX);
+            dragOffsetY = (int)(mouseY - cfg.statsY);
             return true;
         }
         
@@ -248,17 +273,22 @@ public class PositionScaleScreen extends Screen {
     
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        if (dragging == DragTarget.COMMISSION) {
-            CommissionHudMod.config.setPosition((int)mouseX - dragOffsetX, (int)mouseY - dragOffsetY);
-            return true;
-        } else if (dragging == DragTarget.POWDER) {
-            CommissionHudMod.config.setPowderPosition((int)mouseX - dragOffsetX, (int)mouseY - dragOffsetY);
-            return true;
-        } else if (dragging == DragTarget.ABILITY) {
-            CommissionHudMod.config.setAbilityPosition((int)mouseX - dragOffsetX, (int)mouseY - dragOffsetY);
-            return true;
+        switch (dragging) {
+            case COMMISSION:
+                CommissionHudMod.config.setPosition((int)mouseX - dragOffsetX, (int)mouseY - dragOffsetY);
+                return true;
+            case POWDER:
+                CommissionHudMod.config.setPowderPosition((int)mouseX - dragOffsetX, (int)mouseY - dragOffsetY);
+                return true;
+            case ABILITY:
+                CommissionHudMod.config.setAbilityPosition((int)mouseX - dragOffsetX, (int)mouseY - dragOffsetY);
+                return true;
+            case STATS:
+                CommissionHudMod.config.setStatsPosition((int)mouseX - dragOffsetX, (int)mouseY - dragOffsetY);
+                return true;
+            default:
+                return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
         }
-        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
     
     @Override

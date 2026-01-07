@@ -123,6 +123,19 @@ public class ConfigManager {
     public int getAbilityValueColor() { return config.abilityValueColor; }
     public void setAbilityValueColor(int color) { config.abilityValueColor = color; save(); }
     
+    // Stats display settings
+    public boolean isStatsEnabled() { return config.statsEnabled; }
+    public void setStatsEnabled(boolean enabled) { config.statsEnabled = enabled; save(); }
+    public int getStatsX() { return config.statsX; }
+    public int getStatsY() { return config.statsY; }
+    public void setStatsPosition(int x, int y) { config.statsX = x; config.statsY = y; save(); }
+    public float getStatsScale() { return config.statsScale; }
+    public void setStatsScale(float scale) { config.statsScale = scale; save(); }
+    public int getStatsTitleColor() { return config.statsTitleColor; }
+    public void setStatsTitleColor(int color) { config.statsTitleColor = color; save(); }
+    public int getStatsLabelColor() { return config.statsLabelColor; }
+    public void setStatsLabelColor(int color) { config.statsLabelColor = color; save(); }
+    
     public static class Config {
         public boolean enabled = true;
         public float scale = 1.0f;
@@ -152,6 +165,14 @@ public class ConfigManager {
         public int abilityTitleColor = 0xFFFFFF; // White
         public int abilityLabelColor = 0xAAAAAA; // Gray
         public int abilityValueColor = 0xFF5555; // Red for cooldown
+        
+        // Stats display settings
+        public boolean statsEnabled = true;
+        public int statsX = 10;
+        public int statsY = 250;
+        public float statsScale = 1.0f;
+        public int statsTitleColor = 0xFFAA00; // Gold (matches in-game)
+        public int statsLabelColor = 0xAAAAAA; // Gray
     }
     
     public enum ProgressFormat {

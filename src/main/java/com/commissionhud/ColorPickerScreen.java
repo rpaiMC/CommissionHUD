@@ -49,7 +49,9 @@ public class ColorPickerScreen extends Screen {
         POWDER_VALUE_COLOR("Powder Value Color"),
         ABILITY_TITLE_COLOR("Ability Title Color"),
         ABILITY_LABEL_COLOR("Ability Label Color"),
-        ABILITY_VALUE_COLOR("Ability Cooldown Color");
+        ABILITY_VALUE_COLOR("Ability Cooldown Color"),
+        STATS_TITLE_COLOR("Stats Title Color"),
+        STATS_LABEL_COLOR("Stats Label Color");
         
         private final String displayName;
         
@@ -95,6 +97,12 @@ public class ColorPickerScreen extends Screen {
                 break;
             case ABILITY_VALUE_COLOR:
                 this.currentColor = CommissionHudMod.config.getAbilityValueColor();
+                break;
+            case STATS_TITLE_COLOR:
+                this.currentColor = CommissionHudMod.config.getStatsTitleColor();
+                break;
+            case STATS_LABEL_COLOR:
+                this.currentColor = CommissionHudMod.config.getStatsLabelColor();
                 break;
             default:
                 this.currentColor = 0xFFFFFF;
@@ -173,6 +181,12 @@ public class ColorPickerScreen extends Screen {
                     break;
                 case ABILITY_VALUE_COLOR:
                     CommissionHudMod.config.setAbilityValueColor(selectedColor);
+                    break;
+                case STATS_TITLE_COLOR:
+                    CommissionHudMod.config.setStatsTitleColor(selectedColor);
+                    break;
+                case STATS_LABEL_COLOR:
+                    CommissionHudMod.config.setStatsLabelColor(selectedColor);
                     break;
             }
             close();
